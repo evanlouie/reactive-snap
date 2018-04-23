@@ -1,0 +1,16 @@
+{
+  "name": "reactive-snap",
+  "version": "1.0.0",
+  "description": "React static site generator",
+  "main": "index.js",
+  "author": "Evan Louie <evlouie@gmail.com> (https://evanlouie.com)",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2"
+  },
+  "devDependencies": {
+    "@types/react": "^16.3.12",
+    "@types/react-dom": "^16.0.5"
+  }
+}

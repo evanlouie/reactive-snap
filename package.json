@@ -11,6 +11,14 @@
   },
   "devDependencies": {
     "@types/react": "^16.3.12",
-    "@types/react-dom": "^16.0.5"
+    "@types/react-dom": "^16.0.5",
+    "prettier": "^1.12.1",
+    "ts-node": "^6.0.0",
+    "tslint": "^5.9.1",
+    "tslint-config-prettier": "^1.12.0"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "trailingComma": "all"
   }
 }

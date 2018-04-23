@@ -1,26 +1,22 @@
 import * as React from "react";
-
-interface IPost {
-  title: string;
-  body: string;
-}
+import { IPost } from "../types";
 
 interface IState {
   posts: IPost[];
 }
 
 export class PostsContext extends React.Component<IState, IState> {
-  private static defaultState: IState = {
-    posts: [],
-  };
+  // private static defaultState: IState = {
+  //   posts: [],
+  // };
 
-  private static _context: React.Context<IState>;
+  private static context: React.Context<IState>;
 
   private static get Context() {
-    if (!this._context) {
-      this._context = React.createContext<IState>(this.defaultState);
+    if (!this.context) {
+      this.context = React.createContext<IState>() as React.Context<IState>;
     }
-    return this._context;
+    return this.context;
   }
 
   public static get Consumer(): React.Consumer<IState> {
@@ -28,7 +24,7 @@ export class PostsContext extends React.Component<IState, IState> {
   }
 
   public state = {
-    ...PostsContext.defaultState,
+    posts: [],
   };
 
   public render() {

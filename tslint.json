@@ -3,7 +3,8 @@
   "extends": ["tslint:latest", "tslint-react", "tslint-config-prettier"],
   "jsRules": {},
   "rules": {
-    "no-console": [false]
+    "no-console": [false],
+    "no-submodule-imports": [false]
   },
   "rulesDirectory": []
 }

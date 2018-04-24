@@ -88,7 +88,7 @@ if (typeof Worker !== "undefined") {
 } else {
   console.exception(`${navigator.appVersion} lacks Web Worker support.`);
   console.info(
-    "Web Workers are required to evaluated answers as computation will cause the main window thread to lock"
+    "Web Workers are required to evaluated answers as computation will cause the main window thread to lock",
   );
   alert("Your browser doesn't seem to support Web Workers :-(");
 }

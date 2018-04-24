@@ -20,7 +20,7 @@ const Todo = ({ onClick, text }) => <li onClick={onClick}>{text}</li>;
 
 Todo.propTypes = {
   onClick: PropTypes.func.isRequired,
-  text: PropTypes.string.isRequired
+  text: PropTypes.string.isRequired,
 };
 
 export default Todo;
@@ -63,7 +63,7 @@ const mapStateToProps = <T>(state: T) => {
   return {
     greeting: state.greetings.greeting,
     including: state.greetings.including,
-    jokes: state.greetings.jokes
+    jokes: state.greetings.jokes,
   };
 };
 const mapDispatchToProps = <T>(dispatch: Redux.Dispatch<T>) => {
@@ -73,7 +73,7 @@ const mapDispatchToProps = <T>(dispatch: Redux.Dispatch<T>) => {
     },
     onAddMessage: (message: string) => {
       dispatch(Actions.addMessage(message));
-    }
+    },
   };
 };
 
@@ -113,7 +113,7 @@ const mapStateToProps = <T>(state: T): IGreetingState => {
   return {
     greeting: state.greetings.greeting,
     including: state.greetings.including,
-    jokes: state.greetings.jokes
+    jokes: state.greetings.jokes,
   };
 };
 const mapDispatchToProps = <T>(dispatch: Redux.Dispatch<T>): IGreetingActions => {
@@ -123,7 +123,7 @@ const mapDispatchToProps = <T>(dispatch: Redux.Dispatch<T>): IGreetingActions =>
     },
     onAddMessage: (message: string) => {
       dispatch(Actions.addMessage(message));
-    }
+    },
   };
 };
 

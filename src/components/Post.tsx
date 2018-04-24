@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { IPost } from "../types";
 
 export const Post: React.StatelessComponent<IPost> = ({ title, body, postDate }) => (

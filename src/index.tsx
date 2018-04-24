@@ -1,23 +1,24 @@
-import * as fs from "fs";
-import * as marked from "marked";
-import * as path from "path";
-import * as React from "react";
-import * as ReactDOMServer from "react-dom/server";
+import fs from "fs";
+import marked from "marked";
+import path from "path";
+import React from "react";
+import ReactDOMServer from "react-dom/server";
 import { promisify } from "util";
 import { Post } from "./components/Post";
 import { PostsContext } from "./contexts/PostsContext";
-import { IPost } from "./types";
+import { DefaultLayout } from "./layouts/DefaultLayout";
+import { IPage, IPost } from "./types";
 
-const App: React.StatelessComponent<{ posts: IPost[] }> = ({ posts }) => {
+const App: React.StatelessComponent<{ posts: IPost[]; pages: IPage[] }> = ({ posts, children }) => {
   return (
     <div className="App">
       <PostsContext posts={posts}>
         <PostsContext.Consumer>
-          {state => (
-            <div>
-              {state.posts.map(({ title, body, postDate }) => (
-                <Post key={title} title={title} body={body} postDate={postDate} />
-              ))}
+          {postsState => (
+            <div className="PostsConsumer">
+              <DefaultLayout pages={[]} posts={postsState.posts}>
+                {children}
+              </DefaultLayout>
             </div>
           )}
         </PostsContext.Consumer>
@@ -27,6 +28,13 @@ const App: React.StatelessComponent<{ posts: IPost[] }> = ({ posts }) => {
 };
 
 PostsContext.getPosts().then(posts => {
-  const html = ReactDOMServer.renderToStaticMarkup(React.createElement(App, { posts }));
-  console.log(html);
+  const writeFile = promisify(fs.writeFile);
+  for (const post of posts) {
+    const { title, body, postDate } = post;
+    const html = ReactDOMServer.renderToStaticMarkup(
+      React.createElement(App, { posts, pages: [] }, React.createElement(Post, post)),
+    );
+    const writepath = path.join(__dirname, "..", "out", "posts", `${title}.html`);
+    writeFile(writepath, html, { encoding: "utf8" }).then(() => console.log(`Out: ${writepath}`));
+  }
 });

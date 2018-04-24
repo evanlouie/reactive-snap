@@ -10,9 +10,9 @@ Recently I decided to remove Google's Accelerated Mobile Pages (AMP) from a bunc
 
 I did this for several reasons.
 
-1. I wanted to be able to use JS without iframe shenanigans.
-1. Loading the AMP components themselves more than doubled my payload size for a single page.
-1. Cached versions were crazy buggy and once in the cached versions workflow, made for horrid UX in getting back into normal site behaviour.
+1.  I wanted to be able to use JS without iframe shenanigans.
+1.  Loading the AMP components themselves more than doubled my payload size for a single page.
+1.  Cached versions were crazy buggy and once in the cached versions workflow, made for horrid UX in getting back into normal site behaviour.
 
 This page itself loads in at ~70KB in total. Thats a respectably small page payload given what we normally get in the modern web. But if I throw in standard Google AMP Components I would require across the site, the payload for this page becomes ~160KB. Still small, but not small enough for me.
 

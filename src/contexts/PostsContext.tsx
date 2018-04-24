@@ -1,7 +1,8 @@
-import * as fs from "fs";
-import * as marked from "marked";
-import * as path from "path";
-import * as React from "react";
+import fs from "fs";
+import HighlightJS from "highlight.js";
+import marked from "marked";
+import path from "path";
+import React from "react";
 import { promisify } from "util";
 import { IPost } from "../types";
 
@@ -23,8 +24,10 @@ export class PostsContext extends React.Component<IState, IState> {
     );
     const posts: IPost[] = filenames.map((filename, index) => {
       return {
-        body: marked.parse(markdownFiles[index]),
-        postDate: new Date(),
+        body: marked.parse(markdownFiles[index], {
+          highlight: code => HighlightJS.highlightAuto(code).value,
+        }),
+        postDate: new Date() /** @TODO how to store date? */,
         title: filename,
       };
     });

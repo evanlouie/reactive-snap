@@ -10,7 +10,7 @@
     "lint": "tslint --fix 'src/**/*.{ts,tsx}'",
     "build": "ts-node ./src",
     "server": "http-server ./out -p 9999",
-    "watch": "nodemon --watch 'src/**/*.{ts,tsx}' --exec 'ts-node' ./src/index.tsx",
+    "watch": "nodemon --watch ./src -e ts,tsx,json,md,scss,css --exec 'ts-node' ./src/index.tsx",
     "dev": "concurrently 'npm run watch' 'npm run server'"
   },
   "dependencies": {

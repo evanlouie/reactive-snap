@@ -7,7 +7,11 @@
   "license": "MIT",
   "scripts": {
     "format": "prettier --write 'src/**/*.{ts,tsx,js,jsx,json,md,css,scss}'",
-    "lint": "tslint --fix 'src/**/*.{ts,tsx}'"
+    "lint": "tslint --fix 'src/**/*.{ts,tsx}'",
+    "build": "ts-node ./src",
+    "server": "http-server ./out -p 9999",
+    "watch": "nodemon --watch 'src/**/*.{ts,tsx}' --exec 'ts-node' ./src/index.tsx",
+    "dev": "concurrently 'npm run watch' 'npm run server'"
   },
   "dependencies": {
     "highlight.js": "^9.12.0",
@@ -22,6 +26,9 @@
     "@types/node-sass": "^3.10.32",
     "@types/react": "^16.3.12",
     "@types/react-dom": "^16.0.5",
+    "concurrently": "^3.5.1",
+    "http-server": "^0.11.1",
+    "nodemon": "^1.17.3",
     "prettier": "^1.12.1",
     "ts-node": "^6.0.0",
     "tslint": "^5.9.1",

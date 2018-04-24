@@ -29,6 +29,7 @@ const App: React.StatelessComponent<{ posts: IPost[]; pages: IPage[] }> = ({ pos
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono|Roboto+Slab"
         />
+        <script src="https://unpkg.com/turbolinks@latest/dist/turbolinks.js" />
       </head>
       <body style={{ fontFamily: `'Roboto', sans-serif` }}>
         <Styles css={css} />

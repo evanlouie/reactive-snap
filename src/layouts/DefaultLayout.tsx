@@ -13,6 +13,9 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
       <ul>{pages.map(page => <li key={page.title}>{page.title}</li>)}</ul>
     </div>
     <div className="Body">{children}</div>
+    <div className="Posts">
+      <ul>{posts.map(post => <li key={post.title}>{post.title}</li>)}</ul>
+    </div>
     <div className="Footer">All content copyright Evan Louie © 2018 • All rights reserved.</div>
   </div>
 );

@@ -1,14 +1,11 @@
-interface IPublishable {
+export interface IPost {
   title: string;
-}
-
-export interface IPost extends IPublishable {
-  body: string;
+  body: string; // html
   postDate: Date;
 }
-export interface IPage extends IPublishable {
+export interface IPage {
+  title: string;
   body: React.ReactNode;
-  layout: ILayout;
 }
 
 export interface ILayout {

@@ -11,6 +11,38 @@ interface IState {
 }
 
 export class PostsContext extends React.Component<IState, IState> {
+  public static async convertMarkdownToHTML(markdown: string): Promise<string> {
+    const html: string = marked.parse(markdown, {
+      highlight: code => HighlightJS.highlightAuto(code).value,
+    });
+
+    return html;
+  }
+
+  public static async convertFileToPost(filepath: string): Promise<IPost> {
+    const readFile = promisify(fs.readFile);
+    const filename = path.basename(filepath);
+    const filedir = path.dirname(filepath);
+    const fileContent = await readFile(filepath, { encoding: "utf8" });
+    const html = await this.convertMarkdownToHTML(fileContent);
+
+    return {
+      title: filename,
+      body: html,
+      postDate: new Date(),
+    };
+  }
+
+  public static async convertFilesToPosts(filepaths: string[]): Promise<IPost[]> {
+    const posts = await Promise.all(
+      filepaths.map(filepath => {
+        return PostsContext.convertFileToPost(filepath);
+      }),
+    );
+
+    return posts;
+  }
+
   public static async getPosts(): Promise<IPost[]> {
     const readdir = promisify(fs.readdir);
     const readFile = promisify(fs.readFile);

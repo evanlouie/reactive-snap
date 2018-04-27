@@ -1,4 +1,5 @@
 import fs from "fs";
+import glob from "glob";
 import mkdirp from "mkdirp";
 import sass from "node-sass";
 import path from "path";
@@ -35,7 +36,7 @@ const App: React.StatelessComponent<IAppState> = ({ posts, children, title }) =>
         />
         <script src="https://unpkg.com/turbolinks@latest/dist/turbolinks.js" />
       </head>
-      <body style={{ fontFamily: `'Noto Sans', sans-serif` }}>
+      <body style={{ fontFamily: `'Roboto', 'Noto Sans', sans-serif` }}>
         <Styles css={css} />
         <div className="App">
           <PostsContext posts={posts}>
@@ -55,25 +56,92 @@ const App: React.StatelessComponent<IAppState> = ({ posts, children, title }) =>
   );
 };
 
-const generatePosts = async () => {
-  const writeFile = promisify(fs.writeFile);
-  const mkdir = promisify(mkdirp);
-  const posts = await PostsContext.getPosts();
-
-  for (const post of posts) {
-    const { title } = post;
-    const cleanedTitle = title.match(/^(.+)\.(md|markdown)$/i);
-    const html = ReactDOMServer.renderToStaticMarkup(
-      <App title={cleanedTitle ? cleanedTitle[1] : title} posts={posts} pages={[]}>
+const convertFileToHTML = async (
+  filepath: string,
+  content: IPage | IPost,
+  pages: IPage[],
+  posts: IPost[],
+): Promise<string> => {
+  const contents = await promisify(fs.readFile)(filepath, { encoding: "utf8" });
+  if (!!filepath.match(/\.md$/i)) {
+    const html = await PostsContext.convertMarkdownToHTML(contents);
+    const post: IPost = {
+      title: filepath,
+      body: <div className="Post__content" dangerouslySetInnerHTML={{ __html: html }} />,
+      postDate: new Date(),
+    };
+    const page = (
+      <App posts={posts} pages={[]}>
         <Post {...post} />
-      </App>,
+      </App>
     );
-    const writeDirectory = path.join(__dirname, "..", "out", "posts", `${title}`);
-    mkdir(writeDirectory).then(() => {
-      const writepath = path.join(writeDirectory, "index.html");
-      writeFile(writepath, html, { encoding: "utf8" }).then(() => console.log(`Out: ${writepath}`));
-    });
+    return ReactDOMServer.renderToStaticMarkup(page);
+  } else if (!!filepath.match(/\.tsx?$/i)) {
+    const pageContent: IPage = {
+      title: filepath,
+      body: (
+        <div className="Page__content">
+          {/* <pre dangerouslySetInnerHTML={{ __html: contents }} /> */}
+          <pre>{contents}</pre>
+        </div>
+      ),
+    };
+    const page = (
+      <App posts={posts} pages={[]}>
+        {pageContent.body}
+      </App>
+    );
+    return ReactDOMServer.renderToStaticMarkup(page);
   }
+  return "Unsupported filetype";
 };
 
-generatePosts();
+const getSiteFiles = async (): Promise<string[]> => {
+  const writeFile = promisify(fs.writeFile);
+  const mkdir = promisify(mkdirp);
+  const sitePath = path.join(__dirname);
+  const files = await promisify(glob)(`${sitePath}/**/*.{tsx,md}`);
+
+  // Prep pages and posts to saturated contexts
+  const postsMapP: { [filepath: string]: Promise<IPost> } = files
+    .filter(filename => !!path.basename(filename).match(/\.md$/i))
+    .reduce<{ [filepath: string]: Promise<IPost> }>((carry, filepath) => {
+      carry[filepath] = PostsContext.convertFileToPost(filepath);
+      return carry;
+    }, {});
+
+  const pagesMapP: { [filepath: string]: Promise<IPage> } = files
+    .filter(filename => !!path.basename(filename).match(/\.tsx?$/i))
+    .reduce<{ [filepath: string]: Promise<IPage> }>((carry, filepath) => {
+      carry[filepath] = Promise.resolve<IPage>({
+        title: path.basename(filepath),
+        body: <div className="Post">NOT YET IMPLEMENTED</div>,
+      });
+      return carry;
+    }, {});
+
+  const pagesP = Promise.all(Object.values(pagesMapP));
+  const postsP = Promise.all(Object.values(postsMapP));
+
+  Object.entries({ ...postsMapP, ...pagesMapP }).forEach(async ([filepath, pageP]) => {
+    const [page, pages, posts] = await Promise.all([pageP, pagesP, postsP]);
+    const htmlP = convertFileToHTML(filepath, page, pages, posts);
+    const relativeToSrc = path.relative(__dirname, filepath);
+    const filenameWithoutExt = filepath.match(/^(.+)\.(tsx?|md)$/i);
+    if (filenameWithoutExt) {
+      const outDir = path.join(__dirname, "..", "out", relativeToSrc);
+      const createDirP = mkdir(outDir);
+      Promise.all([createDirP, htmlP]).then(async ([_, html]) => {
+        console.log(`Created dir: ${outDir}`);
+        const writePath = path.join(outDir, "index.html");
+
+        await writeFile(writePath, html, { encoding: "utf8" });
+        console.log(`Wrote: ${writePath}`);
+      });
+    }
+  });
+
+  return files;
+};
+
+getSiteFiles();

@@ -9,3 +9,5 @@ export const Resume: React.StatelessComponent = () => (
     <div className="Resume__education">UBC</div>
   </div>
 );
+
+export default Resume;

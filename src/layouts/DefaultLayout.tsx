@@ -8,7 +8,9 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
       display: "grid",
     }}
   >
-    <div className="Header">Evan Louie</div>
+    <div className="Header">
+      <h1>Evan Louie</h1>
+    </div>
     <div className="Menu">
       <ul>{pages.map(page => <li key={page.title}>{page.title}</li>)}</ul>
     </div>

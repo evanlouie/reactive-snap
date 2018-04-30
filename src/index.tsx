@@ -123,25 +123,36 @@ const getSiteFiles = async (): Promise<string[]> => {
   const pagesP = Promise.all(Object.values(pagesMapP));
   const postsP = Promise.all(Object.values(postsMapP));
 
-  Object.entries({ ...postsMapP, ...pagesMapP }).forEach(async ([filepath, pageP]) => {
-    const [page, pages, posts] = await Promise.all([pageP, pagesP, postsP]);
-    const htmlP = convertFileToHTML(filepath, page, pages, posts);
-    const relativeToSrc = path.relative(__dirname, filepath);
-    const filenameWithoutExt = filepath.match(/^(.+)\.(tsx?|md)$/i);
-    if (filenameWithoutExt) {
-      const outDir = path.join(__dirname, "..", "out", relativeToSrc);
-      const createDirP = mkdir(outDir);
-      Promise.all([createDirP, htmlP]).then(async ([_, html]) => {
-        console.log(`Created dir: ${outDir}`);
-        const writePath = path.join(outDir, "index.html");
+  const writesP = Object.entries({ ...postsMapP, ...pagesMapP }).map(
+    async ([filepath, pageP]): Promise<string> => {
+      const [page, pages, posts] = await Promise.all([pageP, pagesP, postsP]);
+      const htmlP = convertFileToHTML(filepath, page, pages, posts);
+      const relativeToSrc = path.relative(__dirname, filepath);
+      const filenameWithoutExt = filepath.match(/^(.+)\.(tsx?|md)$/i);
+      if (filenameWithoutExt) {
+        const outDir = path.join(__dirname, "..", "out", relativeToSrc);
+        const createDirP = mkdir(outDir);
+        return Promise.all([createDirP, htmlP]).then(async ([_, html]) => {
+          // console.log(`Created dir: ${outDir}`);
+          const writePath = path.join(outDir, "index.html");
 
-        await writeFile(writePath, html, { encoding: "utf8" });
-        console.log(`Wrote: ${writePath}`);
-      });
-    }
-  });
+          await writeFile(writePath, html, { encoding: "utf8" });
+          // console.log(`Wrote: ${writePath}`);
+          return writePath;
+        });
+      }
+      return Promise.reject(new Error(`${filepath} does not match legal regex`));
+    },
+  );
 
-  return files;
+  return Promise.all(writesP);
 };
 
-getSiteFiles();
+console.log("Rengerating site...");
+getSiteFiles()
+  .then(files => {
+    console.info(`Site regenerated:`, files);
+  })
+  .catch((reason: Error) => {
+    console.error(reason.message);
+  });

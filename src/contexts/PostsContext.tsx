@@ -75,9 +75,13 @@ export class PostsContext extends React.Component<IState, IState> {
 
   private static context: React.Context<IState>;
 
+  private static defaultState: IState = {
+    posts: [],
+  };
+
   private static get Context() {
     if (!this.context) {
-      this.context = React.createContext<IState>() as React.Context<IState>;
+      this.context = React.createContext<IState>({ ...this.defaultState }) as React.Context<IState>;
     }
     return this.context;
   }
@@ -87,7 +91,7 @@ export class PostsContext extends React.Component<IState, IState> {
   }
 
   public state = {
-    posts: [],
+    ...PostsContext.defaultState,
     ...this.props,
   };
 

@@ -1,5 +1,6 @@
 import fs from "fs";
 import glob from "glob";
+import { Seq } from "immutable";
 import mkdirp from "mkdirp";
 import sass from "node-sass";
 import path from "path";
@@ -103,14 +104,14 @@ const getSiteFiles = async (): Promise<string[]> => {
   const files = await promisify(glob)(`${sitePath}/**/*.{tsx,md}`);
 
   // Prep pages and posts to saturated contexts
-  const postsMapP: { [filepath: string]: Promise<IPost> } = files
+  const postsMapP: { [filepath: string]: Promise<IPost> } = Seq(files)
     .filter(filename => !!path.basename(filename).match(/\.md$/i))
     .reduce<{ [filepath: string]: Promise<IPost> }>((carry, filepath) => {
       carry[filepath] = PostsContext.convertFileToPost(filepath);
       return carry;
     }, {});
 
-  const pagesMapP: { [filepath: string]: Promise<IPage> } = files
+  const pagesMapP: { [filepath: string]: Promise<IPage> } = Seq(files)
     .filter(filename => !!path.basename(filename).match(/\.tsx?$/i))
     .reduce<{ [filepath: string]: Promise<IPage> }>((carry, filepath) => {
       carry[filepath] = Promise.resolve<IPage>({
@@ -148,7 +149,7 @@ const getSiteFiles = async (): Promise<string[]> => {
   return Promise.all(writesP);
 };
 
-console.log("Rengerating site...");
+console.log("Regerating site...");
 getSiteFiles()
   .then(files => {
     console.info(`Site regenerated:`, files);

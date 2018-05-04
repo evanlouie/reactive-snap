@@ -3,27 +3,20 @@ import path from "path";
 import { promisify } from "util";
 
 export class File {
-  private static _turbolinks: string;
-  private static _normalizecss: string;
+  private static _cache: { [key: string]: string } = {};
 
-  private static readFile(
-    pathname: string,
-    { encoding }: { encoding: string } = { encoding: "utf8" },
-  ): string {
-    return fs.readFileSync(pathname, { encoding });
+  private static getFile(pathname: string): string {
+    if (!this._cache[pathname]) {
+      this._cache[pathname] = fs.readFileSync(pathname, { encoding: "utf8" });
+    }
+    return this._cache[pathname];
   }
 
   public static get turbolinks(): string {
-    if (!this._turbolinks) {
-      this._turbolinks = this.readFile(require.resolve("turbolinks"));
-    }
-    return this._turbolinks;
+    return this.getFile(require.resolve("turbolinks"));
   }
 
   public static get normalizecss(): string {
-    if (!this._normalizecss) {
-      this._normalizecss = this.readFile(require.resolve("normalize.css"));
-    }
-    return this._normalizecss;
+    return this.getFile(require.resolve("normalize.css"));
   }
 }

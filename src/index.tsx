@@ -8,9 +8,9 @@ import React from "react";
 import ReactDOMServer from "react-dom/server";
 import { promisify } from "util";
 import { Post } from "./components/Post";
-import { Styles } from "./components/Styles";
 import { PostsContext } from "./contexts/PostsContext";
 import { DefaultLayout } from "./layouts/DefaultLayout";
+import { File } from "./shared/File";
 import { IPage, IPost } from "./types";
 
 const scss = fs.readFileSync(path.join(__dirname, "styles.scss"), { encoding: "utf8" });
@@ -22,6 +22,7 @@ interface IAppState {
   title?: string;
 }
 const App: React.StatelessComponent<IAppState> = ({ posts, children, title }) => {
+  const { turbolinks, normalizecss } = File;
   return (
     <html>
       <head>
@@ -35,10 +36,11 @@ const App: React.StatelessComponent<IAppState> = ({ posts, children, title }) =>
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono|Roboto+Slab"
         />
-        <script src="https://unpkg.com/turbolinks@latest/dist/turbolinks.js" />
+        <style dangerouslySetInnerHTML={{ __html: normalizecss }} />
+        <style dangerouslySetInnerHTML={{ __html: css }} />
+        <script dangerouslySetInnerHTML={{ __html: turbolinks }} />
       </head>
       <body style={{ fontFamily: `'Roboto', 'Noto Sans', sans-serif` }}>
-        <Styles css={css} />
         <div className="App">
           <PostsContext posts={posts}>
             <PostsContext.Consumer>

@@ -132,7 +132,11 @@ const getSiteFiles = async (): Promise<string[]> => {
 
           await writeFile(
             writePath,
-            minify(html, { collapseWhitespace: true, minifyCSS: true, minifyJS: true }),
+            minify(" <!DOCTYPE html>" + html, {
+              collapseWhitespace: true,
+              minifyCSS: true,
+              minifyJS: true,
+            }),
             {
               encoding: "utf8",
             },

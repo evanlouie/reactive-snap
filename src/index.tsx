@@ -23,24 +23,24 @@ const { css } = File;
 const App: React.StatelessComponent<IAppState> = ({ posts, children, title }) => {
   const { turbolinks, normalizecss } = File;
   return (
-    <html>
+    <html lang="en">
       <head>
         <title>{title ? title : "Evan Louie"}</title>
         <meta charSet="utf-8" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Noto+Sans|Noto+Serif"
+          href={encodeURI("https://fonts.googleapis.com/css?family=Noto+Sans|Noto+Serif")}
         />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono|Roboto+Slab"
+          href={encodeURI("https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono|Roboto+Slab")}
         />
         <style dangerouslySetInnerHTML={{ __html: normalizecss }} />
         <style dangerouslySetInnerHTML={{ __html: css }} />
         <script dangerouslySetInnerHTML={{ __html: turbolinks }} />
       </head>
-      <body style={{ fontFamily: `'Roboto', 'Noto Sans', sans-serif` }}>
-        <div className="App">
+      <body>
+        <div className="App" style={{ fontFamily: `'Roboto', 'Noto Sans', sans-serif` }}>
           <PostsContext posts={posts}>
             <PostsContext.Consumer>
               {postsState => (
@@ -129,18 +129,13 @@ const getSiteFiles = async (): Promise<string[]> => {
         const createDirP = mkdir(outDir);
         return Promise.all([createDirP, htmlP]).then(async ([_, html]) => {
           const writePath = path.join(outDir, "index.html");
+          const minified = minify(" <!DOCTYPE html>" + html, {
+            decodeEntities: true, // needed to excape html entities react uses for '/" in style attributes
+            minifyCSS: true,
+            minifyJS: true,
+          });
 
-          await writeFile(
-            writePath,
-            minify(" <!DOCTYPE html>" + html, {
-              collapseWhitespace: true,
-              minifyCSS: true,
-              minifyJS: true,
-            }),
-            {
-              encoding: "utf8",
-            },
-          );
+          await writeFile(writePath, minified, { encoding: "utf8" });
           return writePath;
         });
       }

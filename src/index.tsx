@@ -1,5 +1,6 @@
 import fs from "fs";
 import glob from "glob";
+import { minify } from "html-minifier";
 import { Seq } from "immutable";
 import mkdirp from "mkdirp";
 import sass from "node-sass";
@@ -92,7 +93,7 @@ const getSiteFiles = async (): Promise<string[]> => {
   const sitePath = path.join(__dirname);
   const files = await promisify(glob)(`${sitePath}/**/*.{tsx,md}`);
 
-  // Prep pages and posts to saturated contexts
+  /** Prep pages and posts to saturated contexts */
   const postsMapP: { [filepath: string]: Promise<IPost> } = Seq(files)
     .filter(filename => !!path.basename(filename).match(/\.md$/i))
     .reduce<{ [filepath: string]: Promise<IPost> }>((carry, filepath) => {
@@ -104,6 +105,7 @@ const getSiteFiles = async (): Promise<string[]> => {
     .filter(filename => !!path.basename(filename).match(/\.tsx?$/i))
     .reduce<{ [filepath: string]: Promise<IPage> }>((carry, filepath) => {
       const defaultExport = require(filepath).default;
+      /** .tsx files with a default export are used as 'pages' */
       if (typeof defaultExport === "function") {
         carry[filepath] = Promise.resolve<IPage>({
           title: path.basename(filepath),
@@ -126,11 +128,15 @@ const getSiteFiles = async (): Promise<string[]> => {
         const outDir = path.join(__dirname, "..", "out", relativeToSrc);
         const createDirP = mkdir(outDir);
         return Promise.all([createDirP, htmlP]).then(async ([_, html]) => {
-          // console.log(`Created dir: ${outDir}`);
           const writePath = path.join(outDir, "index.html");
 
-          await writeFile(writePath, html, { encoding: "utf8" });
-          // console.log(`Wrote: ${writePath}`);
+          await writeFile(
+            writePath,
+            minify(html, { collapseWhitespace: true, minifyCSS: true, minifyJS: true }),
+            {
+              encoding: "utf8",
+            },
+          );
           return writePath;
         });
       }

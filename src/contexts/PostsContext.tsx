@@ -28,7 +28,7 @@ export class PostsContext extends React.Component<IState, IState> {
 
     return {
       title: filename,
-      body: html,
+      body: <div dangerouslySetInnerHTML={{ __html: html }} />,
       postDate: new Date(),
     };
   }

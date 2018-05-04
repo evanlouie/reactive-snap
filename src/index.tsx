@@ -10,17 +10,15 @@ import { promisify } from "util";
 import { Post } from "./components/Post";
 import { PostsContext } from "./contexts/PostsContext";
 import { DefaultLayout } from "./layouts/DefaultLayout";
-import { File } from "./shared/File";
+import { File } from "./server/File";
 import { IPage, IPost } from "./types";
-
-const scss = fs.readFileSync(path.join(__dirname, "styles.scss"), { encoding: "utf8" });
-const css = sass.renderSync({ data: scss }).css.toString();
 
 interface IAppState {
   posts: IPost[];
   pages: IPage[];
   title?: string;
 }
+const { css } = File;
 const App: React.StatelessComponent<IAppState> = ({ posts, children, title }) => {
   const { turbolinks, normalizecss } = File;
   return (
@@ -67,31 +65,20 @@ const convertFileToHTML = async (
 ): Promise<string> => {
   const contents = await promisify(fs.readFile)(filepath, { encoding: "utf8" });
   if (!!filepath.match(/\.md$/i)) {
-    const html = await PostsContext.convertMarkdownToHTML(contents);
-    const post: IPost = {
-      title: filepath,
-      body: <div className="Post__content" dangerouslySetInnerHTML={{ __html: html }} />,
-      postDate: new Date(),
-    };
     const page = (
-      <App posts={posts} pages={[]}>
-        <Post {...post} />
+      <App posts={posts} pages={pages} title={filepath}>
+        <Post {...content as IPost} />
       </App>
     );
     return ReactDOMServer.renderToStaticMarkup(page);
   } else if (!!filepath.match(/\.tsx?$/i)) {
     const pageContent: IPage = {
       title: filepath,
-      body: (
-        <div className="Page__content">
-          {/* <pre dangerouslySetInnerHTML={{ __html: contents }} /> */}
-          <pre>{contents}</pre>
-        </div>
-      ),
+      body: <div className="Page__content">{content.body}</div>,
     };
     const page = (
-      <App posts={posts} pages={[]}>
-        {pageContent.body}
+      <App posts={posts} pages={pages} title={filepath}>
+        <div className="Page__content">{content.body}</div>
       </App>
     );
     return ReactDOMServer.renderToStaticMarkup(page);
@@ -116,10 +103,13 @@ const getSiteFiles = async (): Promise<string[]> => {
   const pagesMapP: { [filepath: string]: Promise<IPage> } = Seq(files)
     .filter(filename => !!path.basename(filename).match(/\.tsx?$/i))
     .reduce<{ [filepath: string]: Promise<IPage> }>((carry, filepath) => {
-      carry[filepath] = Promise.resolve<IPage>({
-        title: path.basename(filepath),
-        body: <div className="Post">NOT YET IMPLEMENTED</div>,
-      });
+      const defaultExport = require(filepath).default;
+      if (typeof defaultExport === "function") {
+        carry[filepath] = Promise.resolve<IPage>({
+          title: path.basename(filepath),
+          body: <div className="Post">{defaultExport()}</div>,
+        });
+      }
       return carry;
     }, {});
 

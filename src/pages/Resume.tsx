@@ -28,7 +28,7 @@ interface IResume {
 interface ISkill {
   skill: string;
   tools: string[];
-  icon?: JSX.Element;
+  icon: JSX.Element;
 }
 
 const JavascriptIcon: React.StatelessComponent = () => (
@@ -50,7 +50,7 @@ export const Resume: React.StatelessComponent<IResume> = (
         company: "Microsoft Corporation",
         website: "https://www.microsoft.com/",
         title: "Software Development Engineer",
-        startDate: new Date(Date.parse("June 2017")),
+        startDate: new Date("June 2017"),
         technologies: ["Kubernetes", "Docker", "Azure", "TypeScript", "React", "Go", "Containers"],
         description:
           "Open Source Software Engineer, Azure Consultant, and Containerization Strategist",
@@ -60,8 +60,8 @@ export const Resume: React.StatelessComponent<IResume> = (
         company: "Hootsuite Media, Inc.",
         website: "https://hootsuite.com/",
         title: "Software Developer",
-        startDate: new Date(Date.parse("June 2015")),
-        endDate: new Date(Date.parse("June 2017")),
+        startDate: new Date("June 2015"),
+        endDate: new Date("June 2017"),
         description: "Full-stack Developer of Hootsuite website",
         technologies: ["PHP (Symfony)", "TypeScript (Node.js, React, Redux)"],
         responsibilities: [
@@ -73,8 +73,8 @@ export const Resume: React.StatelessComponent<IResume> = (
       {
         company: "SAP SE",
         website: "https://www.sap.com/",
-        startDate: new Date(Date.parse("January 2012")),
-        endDate: new Date(Date.parse("August 2014")),
+        startDate: new Date("January 2012"),
+        endDate: new Date("August 2014"),
         title: "Software Engineer",
         description: "Full-stack developer and legal analyst of third-party open-source",
         technologies: ["Ruby (Rails)", "JavaScript (CoffeeScript, jQuery)", "Java (Spring)"],
@@ -87,8 +87,8 @@ export const Resume: React.StatelessComponent<IResume> = (
       {
         company: "Oxford Foods",
         website: "https://www.oxfordfoods.ca/",
-        startDate: new Date(Date.parse("May 2007")),
-        endDate: new Date(Date.parse("August 2009")),
+        startDate: new Date("May 2007"),
+        endDate: new Date("August 2009"),
         title: "Software Developer",
         description: "Backend developer of BI/Inventory tools and system administrator",
         technologies: ["Java (Spring)"],
@@ -101,7 +101,7 @@ export const Resume: React.StatelessComponent<IResume> = (
       {
         company: "evanlouie.com",
         website: "/",
-        startDate: new Date(Date.parse("August 2009")),
+        startDate: new Date("August 2009"),
         title: "Software Developer | Azure Consultant | Containerization Strategist",
         description:
           "Contractor specializing in distrubuted systems, cntainerization technologies, and Azure",
@@ -124,13 +124,13 @@ export const Resume: React.StatelessComponent<IResume> = (
       {
         school: "University of British Columbia",
         website: "https://www.ubc.ca/",
-        conferralDate: new Date(Date.parse("April 2015")),
+        conferralDate: new Date("April 2015"),
         degree: "B.Sc Major in Computer Science",
       },
       {
         school: "St. Michaels University School",
         website: "https://www.smus.ca/",
-        conferralDate: new Date(Date.parse("May 2009")),
+        conferralDate: new Date("May 2009"),
         degree: "Dogwood Diploma",
       },
     ],

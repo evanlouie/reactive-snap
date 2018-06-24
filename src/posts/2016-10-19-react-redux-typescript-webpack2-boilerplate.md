@@ -77,7 +77,10 @@ const mapDispatchToProps = <T>(dispatch: Redux.Dispatch<T>) => {
   };
 };
 
-const Homepage = connect(mapStateToProps, mapDispatchToProps)(Greeting);
+const Homepage = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Greeting);
 
 export default Homepage;
 ```
@@ -127,7 +130,10 @@ const mapDispatchToProps = <T>(dispatch: Redux.Dispatch<T>): IGreetingActions =>
   };
 };
 
-const Homepage = connect(mapStateToProps, mapDispatchToProps)(Greeting);
+const Homepage = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Greeting);
 ```
 
 Voila! `connect(mapStateToProps, mapDispatchToProps)` now satisfies the type constraints of `Greeting`!

@@ -1,9 +1,6 @@
 import fs from "fs";
 import glob from "glob";
-import { minify } from "html-minifier";
-import { Seq } from "immutable";
 import mkdirp from "mkdirp";
-import sass from "node-sass";
 import path from "path";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
@@ -11,16 +8,16 @@ import { promisify } from "util";
 import { Post } from "./components/Post";
 import { PostsContext } from "./contexts/PostsContext";
 import { DefaultLayout } from "./layouts/DefaultLayout";
-import { File } from "./server/File";
+import { File, minify } from "./server/File";
 import { IPage, IPost } from "./types";
 
 interface IAppState {
   posts: IPost[];
   pages: IPage[];
   title?: string;
+  css: string;
 }
-const { css } = File;
-const App: React.StatelessComponent<IAppState> = ({ posts, children, title }) => {
+const App: React.StatelessComponent<IAppState> = ({ posts, children, title, css }) => {
   const { turbolinks, normalizecss } = File;
   return (
     <html lang="en">
@@ -29,15 +26,12 @@ const App: React.StatelessComponent<IAppState> = ({ posts, children, title }) =>
         <meta charSet="utf-8" />
         <link
           rel="stylesheet"
-          href={encodeURI("https://fonts.googleapis.com/css?family=Noto+Sans|Noto+Serif")}
-        />
-        <link
-          rel="stylesheet"
           href={encodeURI("https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono|Roboto+Slab")}
         />
         <style dangerouslySetInnerHTML={{ __html: normalizecss }} />
         <style dangerouslySetInnerHTML={{ __html: css }} />
-        <script dangerouslySetInnerHTML={{ __html: turbolinks }} />
+        {/* <script dangerouslySetInnerHTML={{ __html: turbolinks }} /> */}
+        <script defer={true} src="https://unpkg.com/turbolinks@latest/dist/turbolinks.js" />
       </head>
       <body>
         <div className="App" style={{ fontFamily: `'Roboto', 'Noto Sans', sans-serif` }}>
@@ -64,10 +58,14 @@ const convertFileToHTML = async (
   pages: IPage[],
   posts: IPost[],
 ): Promise<string> => {
-  const contents = await promisify(fs.readFile)(filepath, { encoding: "utf8" });
+  const [contents, css] = await Promise.all([
+    promisify(fs.readFile)(filepath, { encoding: "utf8" }),
+    File.getCSS(),
+  ]);
+
   if (!!filepath.match(/\.md$/i)) {
     const page = (
-      <App posts={posts} pages={pages} title={filepath}>
+      <App posts={posts} pages={pages} title={filepath} css={css}>
         <Post {...content as IPost} />
       </App>
     );
@@ -78,7 +76,7 @@ const convertFileToHTML = async (
       body: <div className="Page__content">{content.body}</div>,
     };
     const page = (
-      <App posts={posts} pages={pages} title={filepath}>
+      <App posts={posts} pages={pages} title={filepath} css={css}>
         <div className="Page__content">{content.body}</div>
       </App>
     );
@@ -87,21 +85,21 @@ const convertFileToHTML = async (
   return "Unsupported filetype";
 };
 
-const getSiteFiles = async (): Promise<string[]> => {
-  const writeFile = promisify(fs.writeFile);
-  const mkdir = promisify(mkdirp);
-  const sitePath = path.join(__dirname);
-  const files = await promisify(glob)(`${sitePath}/**/*.{tsx,md}`);
+const getSiteFiles = async (
+  sitePath: string = path.join(__dirname),
+  filesP: Promise<string[]> = promisify(glob)(`${sitePath}/**/*.{tsx,md}`),
+): Promise<string[]> => {
+  const files = await filesP;
 
   /** Prep pages and posts to saturated contexts */
-  const postsMapP: { [filepath: string]: Promise<IPost> } = Seq(files)
+  const postsMapP: { [filepath: string]: Promise<IPost> } = files
     .filter(filename => !!path.basename(filename).match(/\.md$/i))
     .reduce<{ [filepath: string]: Promise<IPost> }>((carry, filepath) => {
       carry[filepath] = PostsContext.convertFileToPost(filepath);
       return carry;
     }, {});
 
-  const pagesMapP: { [filepath: string]: Promise<IPage> } = Seq(files)
+  const pagesMapP: { [filepath: string]: Promise<IPage> } = files
     .filter(filename => !!path.basename(filename).match(/\.tsx?$/i))
     .reduce<{ [filepath: string]: Promise<IPage> }>((carry, filepath) => {
       const defaultExport = require(filepath).default;
@@ -126,16 +124,12 @@ const getSiteFiles = async (): Promise<string[]> => {
       const filenameWithoutExt = filepath.match(/^(.+)\.(tsx?|md)$/i);
       if (filenameWithoutExt) {
         const outDir = path.join(__dirname, "..", "out", relativeToSrc);
-        const createDirP = mkdir(outDir);
+        const createDirP = promisify(mkdirp)(outDir);
         return Promise.all([createDirP, htmlP]).then(async ([_, html]) => {
           const writePath = path.join(outDir, "index.html");
-          const minified = minify(" <!DOCTYPE html>" + html, {
-            decodeEntities: true, // needed to excape html entities react uses for '/" in style attributes
-            minifyCSS: true,
-            minifyJS: true,
-          });
+          const minified = await minify(html);
 
-          await writeFile(writePath, minified, { encoding: "utf8" });
+          await promisify(fs.writeFile)(writePath, minified, { encoding: "utf8" });
           return writePath;
         });
       }

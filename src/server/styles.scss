@@ -4,14 +4,16 @@
 //   font-family: "Fira Code", monospace;
 //   padding: 1px 5px;
 // }
+
+// Code blocks
 pre {
-  font-size: small;
+  // font-size: small;
   border: 1px solid #e8e8e8;
   border-radius: 3px;
   padding: 8px 12px;
   overflow-x: scroll;
 
-  code {
+  > code {
     font-family: monospace !important;
     border: 0;
     padding-right: 0;
@@ -31,10 +33,7 @@ $font-sans: "Roboto", sans-serif;
 $font-mono: "VT323", monospace;
 
 body {
-  p,
-  li {
-    line-height: 1.25em;
-  }
+  line-height: 1.4em;
   font-family: $font-serif;
   h1,
   h2,

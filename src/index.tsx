@@ -122,9 +122,9 @@ const getSiteFiles = async (
         const createDirP = promisify(mkdirp)(outDir);
         return Promise.all([createDirP, htmlP]).then(async ([_, html]) => {
           const writePath = path.join(outDir, "index.html");
-          const minified = await minify(html);
+          // const minified = await minify(html);
 
-          await promisify(fs.writeFile)(writePath, minified, { encoding: "utf8" });
+          await promisify(fs.writeFile)(writePath, html, { encoding: "utf8" });
           return writePath;
         });
       }
@@ -135,11 +135,13 @@ const getSiteFiles = async (
   return Promise.all(writesP);
 };
 
-console.log("Regerating site...");
-getSiteFiles()
-  .then(files => {
-    console.table(files);
-  })
-  .catch((reason: Error) => {
-    console.error(reason.message);
-  });
+console.info("Regerating site...");
+((startTime = Date.now()) =>
+  getSiteFiles()
+    .then(files => {
+      console.table(files);
+      console.info(`Regenerated in: ${Date.now() - startTime}ms`);
+    })
+    .catch((reason: Error) => {
+      console.error(reason.message);
+    }))();

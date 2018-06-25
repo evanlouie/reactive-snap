@@ -22,10 +22,11 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
       "header menu menu" auto
       "body body body" auto
       "footer footer footer" auto / min-content auto auto`,
+      rowGap: "1em",
     }}
   >
     <div className="Header" style={{ gridArea: "header" }}>
-      <span className="InlineIcon">
+      <span className="InlineIcon" style={{ display: "inline-block", width: "3em" }}>
         <Logo />
       </span>
     </div>

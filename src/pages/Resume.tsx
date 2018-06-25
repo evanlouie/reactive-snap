@@ -41,10 +41,21 @@ export const Resume: React.StatelessComponent<IResume> = (
         website: "https://www.microsoft.com/",
         title: "Software Development Engineer",
         startDate: new Date("June 2017"),
-        technologies: ["Kubernetes", "Docker", "Azure", "TypeScript", "React", "Go", "Containers"],
+        technologies: [
+          "Kubernetes",
+          "Docker",
+          "Azure",
+          "TypeScript",
+          "React",
+          "Go",
+          "Containers",
+          "Databricks/Spark",
+        ],
         description:
           "Open Source Software Engineer, Azure Consultant, and Containerization Strategist",
-        responsibilities: [],
+        responsibilities: [
+          "Develop solutions for original problems in the realm of containers and open-source.",
+        ],
       },
       {
         company: "Hootsuite Media, Inc.",
@@ -94,7 +105,7 @@ export const Resume: React.StatelessComponent<IResume> = (
         startDate: new Date("August 2009"),
         title: "Software Developer | Azure Consultant | Containerization Strategist",
         description:
-          "Contractor specializing in distrubuted systems, cntainerization technologies, and Azure",
+          "Contractor specializing in distrubuted systems, containerization technologies, and Azure",
         technologies: [
           "Kubernetes",
           "Docker",
@@ -129,7 +140,7 @@ export const Resume: React.StatelessComponent<IResume> = (
         skill: "Distributed",
         tools: ["Kubernetes", "Docker", "Databricks/Apache Spark", "Apache ZooKeeper", "MPI"],
         icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+          <svg viewBox="0 0 128 128">
             <path
               d="M124.8 52.1c-4.3-2.5-10-2.8-14.8-1.4-.6-5.2-4-9.7-8-12.9l-1.6-1.3-1.4 1.6c-2.7 3.1-3.5 8.3-3.1 12.3.3 2.9 1.2 5.9 3 8.3-1.4.8-2.9 1.9-4.3 2.4-2.8 1-5.9 2-8.9 2H79V49H66V24H51v12H26v13H13v14H1.8l-.2 1.5c-.5 6.4.3 12.6 3 18.5l1.1 2.2.1.2c7.9 13.4 21.7 19 36.8 19 29.2 0 53.3-13.1 64.3-40.6 7.4.4 15-1.8 18.6-8.9l.9-1.8-1.6-1zM28 39h10v11H28V39zm13.1 44.2c0 1.7-1.4 3.1-3.1 3.1-1.7 0-3.1-1.4-3.1-3.1 0-1.7 1.4-3.1 3.1-3.1 1.7.1 3.1 1.4 3.1 3.1zM28 52h10v11H28V52zm-13 0h11v11H15V52zm27.7 50.2c-15.8-.1-24.3-5.4-31.3-12.4 2.1.1 4.1.2 5.9.2 1.6 0 3.2 0 4.7-.1 3.9-.2 7.3-.7 10.1-1.5 2.3 5.3 6.5 10.2 14 13.8h-3.4zM51 63H40V52h11v11zm0-13H40V39h11v11zm13 13H53V52h11v11zm0-13H53V39h11v11zm0-13H53V26h11v11zm13 26H66V52h11v11zM38.8 81.2c-.2-.1-.5-.2-.8-.2-1.2 0-2.2 1-2.2 2.2 0 1.2 1 2.2 2.2 2.2s2.2-1 2.2-2.2c0-.3-.1-.6-.2-.8-.2.3-.4.5-.8.5-.5 0-.9-.4-.9-.9.1-.4.3-.7.5-.8z"
               fill="#019BC6"
@@ -141,7 +152,7 @@ export const Resume: React.StatelessComponent<IResume> = (
         skill: "TypeScript/JavaScript",
         tools: ["Node.js", "Nest", "TypeORM", "Koa.js", "React", "Redux", "Vue.js", "jQuery"],
         icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+          <svg viewBox="0 0 128 128">
             <path fill="#F0DB4F" d="M1.408 1.408h125.184v125.185H1.408z" />
             <path
               fill="#323330"
@@ -204,18 +215,7 @@ export const Resume: React.StatelessComponent<IResume> = (
           </svg>
         ),
       },
-      {
-        skill: "Database/KV Store",
-        tools: ["Azure Cosmos DB", "PostgreSQL", "MySQL/MariaDB", "MongoDB", "SQLite", "Redis"],
-        icon: (
-          <svg viewBox="0 0 128 128">
-            <path
-              d="M6.2 52.7c6.7 3.2 43.7 18.1 49.5 20.9 5.8 2.8 10 2.8 17.4-1 7.4-3.9 42.2-18.1 48.9-21.6 3.4-1.8 4.9-3.2 4.9-4.4V34.1c0-1.3-1.7-2.4-5-3.6-6.5-2.4-41.1-16.1-47.7-18.6-6.6-2.4-9.3-2.3-17.1.5C49.3 15.2 12.6 29.6 6 32.2c-3.2 1.3-5 2.4-5 3.7H.8v12.7c.2 1.2 2.1 2.5 5.4 4.1zm60.4 1.8l-20.3-8.4 29.1-4.5-8.8 12.9zm44.1-20l-17.2 6.8-1.9.7-17.2-6.8 19.1-7.5 17.2 6.8zM60.1 22l-2.8-5.2 8.8 3.4 8.3-2.7-2.2 5.4 8.4 3.2-10.9 1.1-2.4 5.9-3.9-6.5-12.6-1.1 9.3-3.5zm-21.7 7.3c8.6 0 15.6 2.7 15.6 6s-7 6-15.6 6-15.6-2.7-15.6-6 7-6 15.6-6zM122 59.8c-6.7 3.5-41.4 17.8-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-43-17.7-49.6-20.9C2.9 59.9 1 58.6 1 57.3V70c0 1.3 1.9 2.6 5.2 4.2 6.7 3.2 43.7 18.1 49.5 20.9 5.8 2.8 10 2.8 17.4-1 7.4-3.9 42.2-18.1 48.9-21.6 3.4-1.8 4.9-3.2 4.9-4.4V55.6c0 1.1-1.6 2.5-4.9 4.2zm0 20.7c-6.7 3.5-41.4 17.8-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-43-17.7-49.6-20.9C2.9 80.7 1 79.3 1 78v12.7c0 1.3 1.9 2.6 5.2 4.2 6.7 3.2 43.7 18.1 49.5 20.9 5.8 2.8 10 2.8 17.4-1 7.4-3.9 42.2-18.1 48.9-21.6 3.4-1.8 4.9-3.2 4.9-4.4V76.3c0 1.2-1.6 2.5-4.9 4.2z"
-              fill="#D82C20"
-            />
-          </svg>
-        ),
-      },
+
       {
         skill: "Go",
         tools: ["Hugo"],
@@ -416,14 +416,26 @@ export const Resume: React.StatelessComponent<IResume> = (
           </svg>
         ),
       },
+      // {
+      //   skill: "C/C++",
+      //   tools: ["Boost", "OpenGL"],
+      //   icon: (
+      //     <svg viewBox="0 0 128 128">
+      //       <path
+      //         fill="#03599C"
+      //         d="M117.5 33.5l.3-.2c-.6-1.1-1.5-2.1-2.4-2.6L67.1 2.9c-.8-.5-1.9-.7-3.1-.7-1.2 0-2.3.3-3.1.7l-48 27.9c-1.7 1-2.9 3.5-2.9 5.4v55.7c0 1.1.2 2.3.9 3.4l-.2.1c.5.8 1.2 1.5 1.9 1.9l48.2 27.9c.8.5 1.9.7 3.1.7 1.2 0 2.3-.3 3.1-.7l48-27.9c1.7-1 2.9-3.5 2.9-5.4V36.1c.1-.8 0-1.7-.4-2.6zM64 88.5c9.1 0 17.1-5 21.3-12.4l12.9 7.6c-6.8 11.8-19.6 19.8-34.2 19.8-21.8 0-39.5-17.7-39.5-39.5S42.2 24.5 64 24.5c14.7 0 27.5 8.1 34.3 20l-13 7.5C81.1 44.5 73.1 39.5 64 39.5c-13.5 0-24.5 11-24.5 24.5s11 24.5 24.5 24.5z"
+      //       />
+      //     </svg>
+      //   ),
+      // },
       {
-        skill: "C/C++",
-        tools: ["Boost", "OpenGL"],
+        skill: "Database/KV Store",
+        tools: ["Azure Cosmos DB", "PostgreSQL", "MySQL/MariaDB", "MongoDB", "SQLite", "Redis"],
         icon: (
           <svg viewBox="0 0 128 128">
             <path
-              fill="#03599C"
-              d="M117.5 33.5l.3-.2c-.6-1.1-1.5-2.1-2.4-2.6L67.1 2.9c-.8-.5-1.9-.7-3.1-.7-1.2 0-2.3.3-3.1.7l-48 27.9c-1.7 1-2.9 3.5-2.9 5.4v55.7c0 1.1.2 2.3.9 3.4l-.2.1c.5.8 1.2 1.5 1.9 1.9l48.2 27.9c.8.5 1.9.7 3.1.7 1.2 0 2.3-.3 3.1-.7l48-27.9c1.7-1 2.9-3.5 2.9-5.4V36.1c.1-.8 0-1.7-.4-2.6zM64 88.5c9.1 0 17.1-5 21.3-12.4l12.9 7.6c-6.8 11.8-19.6 19.8-34.2 19.8-21.8 0-39.5-17.7-39.5-39.5S42.2 24.5 64 24.5c14.7 0 27.5 8.1 34.3 20l-13 7.5C81.1 44.5 73.1 39.5 64 39.5c-13.5 0-24.5 11-24.5 24.5s11 24.5 24.5 24.5z"
+              d="M6.2 52.7c6.7 3.2 43.7 18.1 49.5 20.9 5.8 2.8 10 2.8 17.4-1 7.4-3.9 42.2-18.1 48.9-21.6 3.4-1.8 4.9-3.2 4.9-4.4V34.1c0-1.3-1.7-2.4-5-3.6-6.5-2.4-41.1-16.1-47.7-18.6-6.6-2.4-9.3-2.3-17.1.5C49.3 15.2 12.6 29.6 6 32.2c-3.2 1.3-5 2.4-5 3.7H.8v12.7c.2 1.2 2.1 2.5 5.4 4.1zm60.4 1.8l-20.3-8.4 29.1-4.5-8.8 12.9zm44.1-20l-17.2 6.8-1.9.7-17.2-6.8 19.1-7.5 17.2 6.8zM60.1 22l-2.8-5.2 8.8 3.4 8.3-2.7-2.2 5.4 8.4 3.2-10.9 1.1-2.4 5.9-3.9-6.5-12.6-1.1 9.3-3.5zm-21.7 7.3c8.6 0 15.6 2.7 15.6 6s-7 6-15.6 6-15.6-2.7-15.6-6 7-6 15.6-6zM122 59.8c-6.7 3.5-41.4 17.8-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-43-17.7-49.6-20.9C2.9 59.9 1 58.6 1 57.3V70c0 1.3 1.9 2.6 5.2 4.2 6.7 3.2 43.7 18.1 49.5 20.9 5.8 2.8 10 2.8 17.4-1 7.4-3.9 42.2-18.1 48.9-21.6 3.4-1.8 4.9-3.2 4.9-4.4V55.6c0 1.1-1.6 2.5-4.9 4.2zm0 20.7c-6.7 3.5-41.4 17.8-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-43-17.7-49.6-20.9C2.9 80.7 1 79.3 1 78v12.7c0 1.3 1.9 2.6 5.2 4.2 6.7 3.2 43.7 18.1 49.5 20.9 5.8 2.8 10 2.8 17.4-1 7.4-3.9 42.2-18.1 48.9-21.6 3.4-1.8 4.9-3.2 4.9-4.4V76.3c0 1.2-1.6 2.5-4.9 4.2z"
+              fill="#D82C20"
             />
           </svg>
         ),
@@ -466,95 +478,166 @@ export const Resume: React.StatelessComponent<IResume> = (
     12: "December",
   };
 
+  const InlineIcon: StatelessComponent = ({ children }) => (
+    <span
+      className="InlineIcon"
+      style={{ display: "inline-block", width: "1em", height: "1em", margin: "auto 0.5em" }}
+    >
+      {children}
+    </span>
+  );
+
+  const Section: StatelessComponent<{ heading: string; className: string }> = ({
+    children,
+    className,
+    heading,
+  }) => (
+    <section
+      className={`Section ${className}`}
+      style={{ borderTop: "1px solid #eee", marginTop: "1em" }}
+    >
+      <h3 className="title">{heading}</h3>
+      {children}
+    </section>
+  );
+
+  const DotlessUl: StatelessComponent = ({ children }) => (
+    <ul className="DotlessUl" style={{ listStyle: "none", paddingLeft: "0.25em", margin: "0" }}>
+      {children}
+    </ul>
+  );
+
+  const Skill: StatelessComponent<ISkill> = ({ skill, tools, icon }) => (
+    <li key={skill}>
+      <InlineIcon>{icon}</InlineIcon>
+      <strong>{skill}: </strong>
+      {tools.map((tool, index) => `${tool}${index !== tools.length - 1 ? ", " : ""}`)}
+    </li>
+  );
+
+  const Job: StatelessComponent<IJob> = ({
+    company,
+    title,
+    description,
+    website,
+    startDate,
+    endDate,
+    responsibilities,
+    technologies,
+  }) => (
+    <div
+      key={company + title}
+      className="job"
+      style={{ display: "flex", flexDirection: "column", flexWrap: "wrap", marginTop: "1em" }}
+    >
+      <div
+        className="placement"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        }}
+      >
+        <span className="company">
+          <a href={website}>{company}</a>
+        </span>
+        <span className="duration">
+          {`${monthMap[startDate.getMonth() + 1]} ${startDate.getFullYear()} - `}
+          {endDate ? `${monthMap[endDate.getMonth() + 1]} ${endDate.getFullYear()}` : "Present"}
+        </span>
+      </div>
+      <div className="role">
+        <i>{title}</i>
+      </div>
+      <div className="description">
+        <b>{description}</b>
+      </div>
+      <div className="technologies">
+        <InlineIcon>
+          <svg viewBox="0 0 1792 1792">
+            <path d="M553 1399l-50 50q-10 10-23 10t-23-10L-9 983q-10-10-10-23t10-23l466-466q10-10 23-10t23 10l50 50q10 10 10 23t-10 23L160 960l393 393q10 10 10 23t-10 23zm591-1067L771 1623q-4 13-15.5 19.5T732 1645l-62-17q-13-4-19.5-15.5T648 1588l373-1291q4-13 15.5-19.5t23.5-2.5l62 17q13 4 19.5 15.5t2.5 24.5zm657 651l-466 466q-10 10-23 10t-23-10l-50-50q-10-10-10-23t10-23l393-393-393-393q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l466 466q10 10 10 23t-10 23z" />
+          </svg>
+        </InlineIcon>
+        <code>
+          {technologies.map(
+            (tech, index) => `${tech}${index !== technologies.length - 1 ? ", " : ""}`,
+          )}
+        </code>
+      </div>
+      <div className="responsibilities">
+        <DotlessUl>
+          {responsibilities.map(responsibility => (
+            <li key={responsibility}>
+              <InlineIcon>
+                <svg viewBox="0 0 1792 1792">
+                  <path d="M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45L531 45q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z" />
+                </svg>
+              </InlineIcon>
+              {responsibility}
+            </li>
+          ))}
+        </DotlessUl>
+      </div>
+    </div>
+  );
+
+  const Education: StatelessComponent<IEducation> = ({
+    school,
+    degree,
+    website,
+    conferralDate,
+  }) => (
+    <div
+      key={school + degree}
+      className="education"
+      style={{ display: "flex", flexDirection: "column" }}
+    >
+      <div
+        className="convocation"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        }}
+      >
+        <span className="school">
+          <a href={website}>{school}</a>
+        </span>
+        <span className="conferred">{`${
+          monthMap[conferralDate.getMonth()]
+        } ${conferralDate.getFullYear()}`}</span>
+      </div>
+      <div className="degree">
+        <InlineIcon>
+          <svg viewBox="0 0 1792 1792">
+            <path d="M1518 836l18 316q4 69-82 128t-235 93.5-323 34.5-323-34.5-235-93.5-82-128l18-316 574 181q22 7 48 7t48-7zm530-324q0 23-22 31L906 895q-4 1-10 1t-10-1L234 689q-43 34-71 111.5T129 979q63 36 63 109 0 69-58 107l58 433q2 14-8 25-9 11-24 11H-32q-15 0-24-11-10-11-8-25l58-433q-58-38-58-107 0-73 65-111 11-207 98-330l-333-104q-22-8-22-31t22-31L886 129q4-1 10-1t10 1l1120 352q22 8 22 31z" />
+          </svg>
+        </InlineIcon>
+        {degree}
+      </div>
+    </div>
+  );
+
   return (
     <div className="Resume">
       <article className="content resume">
-        <section className="section">
-          <h3 className="title">Profile</h3>
+        <Section className="profile" heading="Profile">
           <p className="body">{profile}</p>
-        </section>
+        </Section>
 
-        <section className="skills">
-          <h3 className="title">Skills</h3>
-          <ul className="body">
-            {skills.map(({ skill, tools, icon }) => (
-              <li key={skill}>
-                <span className="icon" style={{ width: "1em", height: "1em" }}>
-                  {icon}
-                </span>
-                <strong>{skill}: </strong>
-                {tools.map((tool, index) => `${tool}${index !== tools.length - 1 ? ", " : ""}`)}
-              </li>
-            ))}
-          </ul>
-        </section>
+        <Section className="skills" heading="Skills">
+          <DotlessUl>{skills.map(Skill)}</DotlessUl>
+        </Section>
 
-        <section className="experience">
-          <h3 className="title">Experience</h3>
-          <div className="body">
-            {experience.map(
-              ({
-                company,
-                title,
-                description,
-                website,
-                startDate,
-                endDate,
-                responsibilities,
-                technologies,
-              }) => (
-                <div key={company + title} className="job">
-                  <div className="placement">
-                    <span className="company">
-                      <a href={website}>{company}</a>
-                    </span>
-                    <span className="duration">
-                      {`${monthMap[startDate.getMonth() + 1]} ${startDate.getFullYear()} - `}
-                      {endDate
-                        ? `${monthMap[endDate.getMonth() + 1]} ${endDate.getFullYear()}`
-                        : "Present"}
-                    </span>
-                  </div>
-                  <div className="role">{title}</div>
-                  <div className="description">{description}</div>
-                  <div className="technologies" style={{ fontSize: "small" }}>
-                    {technologies.map(
-                      (tech, index) => `${tech}${index !== technologies.length - 1 ? ", " : ""}`,
-                    )}
-                  </div>
-                  <div className="responsibilities">
-                    <ul>
-                      {responsibilities.map(responsibility => (
-                        <li key={responsibility}>{responsibility}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ),
-            )}
-          </div>
-        </section>
+        <Section className="experience" heading="Experience">
+          {experience.map(Job)}
+        </Section>
 
-        <section className="education">
-          <div className="title">
-            <h3>Education</h3>
-          </div>
-          <div className="body">
-            {education.map(({ school, degree, website, conferralDate }) => (
-              <div key={school + degree} className="entry">
-                <div className="convocation">
-                  <span className="school">
-                    <a href={website}>{school}</a>
-                  </span>
-                  <span className="conferred">{`${
-                    monthMap[conferralDate.getMonth()]
-                  }/${conferralDate.getFullYear()}`}</span>
-                </div>
-                <div className="degree">{degree}</div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <Section className="education" heading="Education">
+          {education.map(Education)}
+        </Section>
       </article>
     </div>
   );

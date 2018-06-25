@@ -28,25 +28,25 @@ const App: React.StatelessComponent<IAppState> = ({ posts, children, title, css 
           rel="stylesheet"
           href={encodeURI("https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono|Roboto+Slab")}
         />
+        <link href={encodeURI("https://fonts.googleapis.com/css?family=VT323")} rel="stylesheet" />
+
         <style dangerouslySetInnerHTML={{ __html: normalizecss }} />
         <style dangerouslySetInnerHTML={{ __html: css }} />
         {/* <script dangerouslySetInnerHTML={{ __html: turbolinks }} /> */}
         <script defer={true} src="https://unpkg.com/turbolinks@latest/dist/turbolinks.js" />
       </head>
       <body>
-        <div className="App" style={{ fontFamily: `'Roboto', 'Noto Sans', sans-serif` }}>
-          <PostsContext posts={posts}>
-            <PostsContext.Consumer>
-              {postsState => (
-                <div className="PostsConsumer">
-                  <DefaultLayout pages={[]} posts={postsState.posts}>
-                    {children}
-                  </DefaultLayout>
-                </div>
-              )}
-            </PostsContext.Consumer>
-          </PostsContext>
-        </div>
+        <PostsContext posts={posts}>
+          <PostsContext.Consumer>
+            {postsState => (
+              <div className="PostsConsumer">
+                <DefaultLayout pages={[]} posts={postsState.posts}>
+                  {children}
+                </DefaultLayout>
+              </div>
+            )}
+          </PostsContext.Consumer>
+        </PostsContext>
       </body>
     </html>
   );
@@ -120,10 +120,11 @@ const getSiteFiles = async (
     async ([filepath, pageP]): Promise<string> => {
       const [page, pages, posts] = await Promise.all([pageP, pagesP, postsP]);
       const htmlP = convertFileToHTML(filepath, page, pages, posts);
-      const relativeToSrc = path.relative(__dirname, filepath);
-      const filenameWithoutExt = filepath.match(/^(.+)\.(tsx?|md)$/i);
-      if (filenameWithoutExt) {
-        const outDir = path.join(__dirname, "..", "out", relativeToSrc);
+      const filenameWithoutExtMatch = filepath.match(/^(.+)\.(tsx?|md)$/i);
+      if (filenameWithoutExtMatch) {
+        const filenameWithoutExt = path.relative(__dirname, filenameWithoutExtMatch[1]);
+        const outDir = path.join(__dirname, "..", "out", filenameWithoutExt).toLowerCase();
+        console.log(outDir);
         const createDirP = promisify(mkdirp)(outDir);
         return Promise.all([createDirP, htmlP]).then(async ([_, html]) => {
           const writePath = path.join(outDir, "index.html");

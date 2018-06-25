@@ -5,12 +5,12 @@ import path from "path";
 import { promisify } from "util";
 
 export class File {
-  public static async getCSS(): Promise<string> {
+  public static async getCSS({ includePaths } = { includePaths: [__dirname] }): Promise<string> {
     const scss = await promisify(fs.readFile)(path.join(__dirname, "styles.scss"), {
       encoding: "utf8",
     });
     return new Promise<string>((resolve, reject) => {
-      sass.render({ data: scss }, (err, result) => {
+      sass.render({ data: scss, includePaths }, (err, result) => {
         if (err) {
           return reject(err);
         } else {

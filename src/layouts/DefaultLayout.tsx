@@ -14,7 +14,8 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
   <div
     className="DefaultLayout"
     style={{
-      margin: "1em auto",
+      margin: "auto",
+      padding: "1em",
       maxWidth: "960px",
       display: "grid",
       gridTemplate: `
@@ -33,7 +34,16 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
     </div>
     <div className="Body" style={{ gridArea: " body" }}>
       {children}
-      <div className="Posts">
+      <div
+        className="Posts"
+        style={{
+          position: "fixed",
+          top: 0,
+          right: 0,
+          background: "white",
+          border: "1px solid grey",
+        }}
+      >
         <ul>
           {posts.map(post => (
             <li key={post.title}>

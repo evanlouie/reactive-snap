@@ -24,12 +24,23 @@ export class PostsContext extends React.Component<IState, IState> {
     const filename = path.basename(filepath);
     const filedir = path.dirname(filepath);
     const fileContent = await readFile(filepath, { encoding: "utf8" });
-    const html = await this.convertMarkdownToHTML(fileContent);
+    const frontMatterRegex = /^---([^-]+)---((.|\n)+)$/i.exec(fileContent);
+    const frontMatter: Map<string, string> = frontMatterRegex
+      ? frontMatterRegex[1]
+          .trim()
+          .split("\n")
+          .map(line => line.split(":").map(s => s.trim()))
+          .reduce((map, pair) => map.set(pair[0], pair[1]), new Map())
+      : new Map();
+    const html = await this.convertMarkdownToHTML(
+      frontMatterRegex ? frontMatterRegex[2] : fileContent,
+    );
+    const filenameFormatCorrect = filename.match(/(\d{4}-\d{2}-\d{2})-(.+)/i);
 
     return {
-      title: filename,
+      title: filenameFormatCorrect ? filenameFormatCorrect[2].replace("-", " ") : filename,
       body: <div dangerouslySetInnerHTML={{ __html: html }} />,
-      postDate: new Date(),
+      postDate: filenameFormatCorrect ? new Date(filenameFormatCorrect[1]) : new Date(),
     };
   }
 

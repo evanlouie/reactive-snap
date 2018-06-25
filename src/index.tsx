@@ -14,10 +14,10 @@ import { IPage, IPost } from "./types";
 interface IAppState {
   posts: IPost[];
   pages: IPage[];
-  title?: string;
+  title: string;
   css: string;
 }
-const App: React.StatelessComponent<IAppState> = ({ posts, children, title, css }) => {
+const App: React.StatelessComponent<IAppState> = ({ pages, posts, children, title, css }) => {
   const { turbolinks, normalizecss } = File;
   return (
     <html lang="en">
@@ -33,14 +33,14 @@ const App: React.StatelessComponent<IAppState> = ({ posts, children, title, css 
         <style dangerouslySetInnerHTML={{ __html: normalizecss }} />
         <style dangerouslySetInnerHTML={{ __html: css }} />
         {/* <script dangerouslySetInnerHTML={{ __html: turbolinks }} /> */}
-        <script defer={true} src="https://unpkg.com/turbolinks@latest/dist/turbolinks.js" />
+        {/* <script defer={true} src="https://unpkg.com/turbolinks@latest/dist/turbolinks.js" /> */}
       </head>
       <body>
         <PostsContext posts={posts}>
           <PostsContext.Consumer>
             {postsState => (
               <div className="PostsConsumer">
-                <DefaultLayout pages={[]} posts={postsState.posts}>
+                <DefaultLayout pages={pages} posts={postsState.posts}>
                   {children}
                 </DefaultLayout>
               </div>
@@ -52,7 +52,7 @@ const App: React.StatelessComponent<IAppState> = ({ posts, children, title, css 
   );
 };
 
-const convertFileToHTML = async (
+const renderToStaticMarkup = async (
   filepath: string,
   content: IPage | IPost,
   pages: IPage[],
@@ -63,26 +63,21 @@ const convertFileToHTML = async (
     File.getCSS(),
   ]);
 
-  if (!!filepath.match(/\.md$/i)) {
-    const page = (
-      <App posts={posts} pages={pages} title={filepath} css={css}>
-        <Post {...content as IPost} />
-      </App>
-    );
-    return ReactDOMServer.renderToStaticMarkup(page);
-  } else if (!!filepath.match(/\.tsx?$/i)) {
-    const pageContent: IPage = {
-      title: filepath,
-      body: <div className="Page__content">{content.body}</div>,
-    };
-    const page = (
-      <App posts={posts} pages={pages} title={filepath} css={css}>
-        <div className="Page__content">{content.body}</div>
-      </App>
-    );
-    return ReactDOMServer.renderToStaticMarkup(page);
-  }
-  return "Unsupported filetype";
+  const page = !!filepath.match(/\.md$/i) ? (
+    <App posts={posts} pages={pages} title={filepath} css={css}>
+      <Post {...content as IPost} />
+    </App>
+  ) : !!filepath.match(/\.tsx?$/i) ? (
+    <App posts={posts} pages={pages} title={filepath} css={css}>
+      <div className="Page__content">{content.body}</div>
+    </App>
+  ) : (
+    <App posts={posts} pages={pages} title={filepath} css={css}>
+      <div className="Page__content">Page format not supported</div>
+    </App>
+  );
+
+  return ReactDOMServer.renderToStaticMarkup(page);
 };
 
 const getSiteFiles = async (
@@ -119,12 +114,11 @@ const getSiteFiles = async (
   const writesP = Object.entries({ ...postsMapP, ...pagesMapP }).map(
     async ([filepath, pageP]): Promise<string> => {
       const [page, pages, posts] = await Promise.all([pageP, pagesP, postsP]);
-      const htmlP = convertFileToHTML(filepath, page, pages, posts);
+      const htmlP = renderToStaticMarkup(filepath, page, pages, posts);
       const filenameWithoutExtMatch = filepath.match(/^(.+)\.(tsx?|md)$/i);
       if (filenameWithoutExtMatch) {
         const filenameWithoutExt = path.relative(__dirname, filenameWithoutExtMatch[1]);
         const outDir = path.join(__dirname, "..", "out", filenameWithoutExt).toLowerCase();
-        console.log(outDir);
         const createDirP = promisify(mkdirp)(outDir);
         return Promise.all([createDirP, htmlP]).then(async ([_, html]) => {
           const writePath = path.join(outDir, "index.html");
@@ -144,7 +138,7 @@ const getSiteFiles = async (
 console.log("Regerating site...");
 getSiteFiles()
   .then(files => {
-    console.info(`Site regenerated:`, files);
+    console.table(files);
   })
   .catch((reason: Error) => {
     console.error(reason.message);

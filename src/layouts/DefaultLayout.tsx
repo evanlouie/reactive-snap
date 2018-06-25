@@ -14,17 +14,19 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
   <div
     className="DefaultLayout"
     style={{
-      margin: "auto",
+      margin: "1em auto",
       maxWidth: "960px",
       display: "grid",
       gridTemplate: `
       "header menu menu" auto
       "body body body" auto
-      "footer footer footer" auto`,
+      "footer footer footer" auto / min-content auto auto`,
     }}
   >
     <div className="Header" style={{ gridArea: "header" }}>
-      <h1>Evan Louie</h1>
+      <span className="InlineIcon">
+        <Logo />
+      </span>
     </div>
     <div className="Menu" style={{ gridArea: "menu" }}>
       <ul>{pages.map(page => <li key={page.title}>{page.title}</li>)}</ul>

@@ -101,25 +101,28 @@ const getSiteFiles = async (
     siteFiles.then((files) =>
       files
         .filter((filename) => !!path.basename(filename).match(/\.md$/i))
-        .reduce<{ [filepath: string]: Promise<IPost> }>((carry, filepath) => {
-          carry[filepath] = convertFileToPost(filepath);
-          return carry;
-        }, {}),
+        .reduce<{ [filepath: string]: Promise<IPost> }>(
+          (carry, filepath) => ({ ...carry, [filepath]: convertFileToPost(filepath) }),
+          {},
+        ),
     ),
     siteFiles.then((files) =>
       files
         .filter((filename) => !!path.basename(filename).match(/\.tsx?$/i))
-        .reduce<{ [filepath: string]: Promise<IPage> }>((carry, filepath) => {
-          const defaultExport = require(filepath).default;
-          /** .tsx files with a default export are used as 'pages' */
-          if (typeof defaultExport === "function") {
-            carry[filepath] = Promise.resolve<IPage>({
-              title: path.basename(filepath),
-              body: <div className="Post">{defaultExport()}</div>,
-            });
-          }
-          return carry;
-        }, {}),
+        .reduce<{ [filepath: string]: Promise<IPage> }>(
+          (carry, filepath) =>
+            ((defaultExport = require(filepath).default) =>
+              typeof defaultExport === "function"
+                ? {
+                    ...carry,
+                    [filepath]: Promise.resolve<IPage>({
+                      title: path.basename(filepath),
+                      body: <div className="Post">{defaultExport()}</div>,
+                    }),
+                  }
+                : carry)(),
+          {},
+        ),
     ),
   ]).then(([postsMap, pagesMap]) =>
     Object.entries({ ...postsMap, ...pagesMap }).map(([filepath, pageP]) =>
@@ -131,10 +134,17 @@ const getSiteFiles = async (
     ),
   );
 
+////////////////////////////////////////////////////////////////////////////////
+// Main
+////////////////////////////////////////////////////////////////////////////////
 (async (startTime = Date.now()) => {
-  console.info("Regerating site...");
-  const writes = await getSiteFiles();
-  const filesWritten = await Promise.all(writes);
-  console.table(filesWritten);
-  console.info(`Site regenerated in ${Date.now() - startTime}ms`);
+  try {
+    console.info("Regerating site...");
+    const writes = await getSiteFiles();
+    const filesWritten = await Promise.all(writes);
+    console.table(filesWritten);
+    console.info(`Site regenerated in: ${Date.now() - startTime}ms`);
+  } catch (err) {
+    console.error(err);
+  }
 })();

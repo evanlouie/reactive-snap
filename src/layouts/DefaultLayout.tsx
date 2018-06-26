@@ -39,7 +39,7 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
     <div className="Footer" style={{ gridArea: "footer" }}>
       All content copyright Evan Louie © {new Date().getFullYear()} • All rights reserved.
     </div>
-    <div
+    {/* <div
       className="Posts"
       style={{
         position: "fixed",
@@ -57,6 +57,6 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
           </li>
         ))}
       </ul>
-    </div>
+    </div> */}
   </div>
 );

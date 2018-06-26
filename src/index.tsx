@@ -22,6 +22,7 @@ const App: React.StatelessComponent<IAppState> = ({ pages, posts, children, titl
     <head>
       <title>{title ? title : "Evan Louie"}</title>
       <meta charSet="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link
         rel="stylesheet"
         href={encodeURI("https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono|Roboto+Slab")}

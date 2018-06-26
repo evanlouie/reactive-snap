@@ -17,131 +17,118 @@ interface IAppState {
   title: string;
   css: string;
 }
-const App: React.StatelessComponent<IAppState> = ({ pages, posts, children, title, css }) => {
-  const { turbolinks, normalizecss } = File;
-  return (
-    <html lang="en">
-      <head>
-        <title>{title ? title : "Evan Louie"}</title>
-        <meta charSet="utf-8" />
-        <link
-          rel="stylesheet"
-          href={encodeURI("https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono|Roboto+Slab")}
-        />
-        <link href={encodeURI("https://fonts.googleapis.com/css?family=VT323")} rel="stylesheet" />
-
-        <style dangerouslySetInnerHTML={{ __html: normalizecss }} />
-        <style dangerouslySetInnerHTML={{ __html: css }} />
-        {/* <script dangerouslySetInnerHTML={{ __html: turbolinks }} /> */}
-        {/* <script defer={true} src="https://unpkg.com/turbolinks@latest/dist/turbolinks.js" /> */}
-      </head>
-      <body>
-        <PostsContext posts={posts}>
-          <PostsContext.Consumer>
-            {postsState => (
-              <div className="PostsConsumer">
-                <DefaultLayout pages={pages} posts={postsState.posts}>
-                  {children}
-                </DefaultLayout>
-              </div>
-            )}
-          </PostsContext.Consumer>
-        </PostsContext>
-      </body>
-    </html>
-  );
-};
+const App: React.StatelessComponent<IAppState> = ({ pages, posts, children, title, css }) => (
+  <html lang="en">
+    <head>
+      <title>{title ? title : "Evan Louie"}</title>
+      <meta charSet="utf-8" />
+      <link
+        rel="stylesheet"
+        href={encodeURI("https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono|Roboto+Slab")}
+      />
+      <link href={encodeURI("https://fonts.googleapis.com/css?family=VT323")} rel="stylesheet" />
+      <style dangerouslySetInnerHTML={{ __html: File.normalizecss }} />
+      <style dangerouslySetInnerHTML={{ __html: css }} />
+      <script dangerouslySetInnerHTML={{ __html: File.turbolinks }} />
+    </head>
+    <body>
+      <PostsContext posts={posts}>
+        <PostsContext.Consumer>
+          {postsState => (
+            <div className="PostsConsumer">
+              <DefaultLayout pages={pages} posts={postsState.posts}>
+                {children}
+              </DefaultLayout>
+            </div>
+          )}
+        </PostsContext.Consumer>
+      </PostsContext>
+    </body>
+  </html>
+);
 
 const renderToStaticMarkup = async (
   filepath: string,
   content: IPage | IPost,
   pages: IPage[],
   posts: IPost[],
-): Promise<string> => {
-  const [contents, css] = await Promise.all([
-    promisify(fs.readFile)(filepath, { encoding: "utf8" }),
-    File.getCSS(),
-  ]);
-
-  const page = !!filepath.match(/\.md$/i) ? (
-    <App posts={posts} pages={pages} title={filepath} css={css}>
-      <Post {...content as IPost} />
-    </App>
-  ) : !!filepath.match(/\.tsx?$/i) ? (
-    <App posts={posts} pages={pages} title={filepath} css={css}>
-      <div className="Page__content">{content.body}</div>
-    </App>
-  ) : (
-    <App posts={posts} pages={pages} title={filepath} css={css}>
-      <div className="Page__content">Page format not supported</div>
-    </App>
+): Promise<string> =>
+  File.getCSS().then(css =>
+    ReactDOMServer.renderToStaticMarkup(
+      !!filepath.match(/\.md$/i) ? (
+        <App posts={posts} pages={pages} title={(content as IPost).title} css={css}>
+          <Post {...content as IPost} />
+        </App>
+      ) : !!filepath.match(/\.tsx?$/i) ? (
+        <App posts={posts} pages={pages} title={filepath} css={css}>
+          <div className="Page__content">{content.body}</div>
+        </App>
+      ) : (
+        <App posts={posts} pages={pages} title={filepath} css={css}>
+          <div className="Page__content">Page format not supported</div>
+        </App>
+      ),
+    ),
   );
 
-  return ReactDOMServer.renderToStaticMarkup(page);
-};
+const writeOutFile = async (filepath: string, page: IPage, pages: IPage[], posts: IPost[]) =>
+  ((validFile = filepath.match(/^(.+)\.(tsx?|md)$/i)) =>
+    validFile
+      ? ((
+          outDir = path
+            .join(__dirname, "..", "out", path.relative(__dirname, validFile[1]))
+            .toLowerCase(),
+        ) =>
+          Promise.all([
+            renderToStaticMarkup(filepath, page, pages, posts),
+            promisify(mkdirp)(outDir),
+          ]).then(([html, _], writePath: string = path.join(outDir, "index.html")) =>
+            promisify(fs.writeFile)(writePath, html, { encoding: "utf8" }).then(() => writePath),
+          ))()
+      : Promise.reject(new Error(`${filepath} does not match legal regex`)))();
 
 const getSiteFiles = async (
   sitePath: string = path.join(__dirname),
-  filesP: Promise<string[]> = promisify(glob)(`${sitePath}/**/*.{tsx,md}`),
-): Promise<string[]> => {
-  const files = await filesP;
-
-  /** Prep pages and posts to saturated contexts */
-  const postsMapP: { [filepath: string]: Promise<IPost> } = files
-    .filter(filename => !!path.basename(filename).match(/\.md$/i))
-    .reduce<{ [filepath: string]: Promise<IPost> }>((carry, filepath) => {
-      carry[filepath] = PostsContext.convertFileToPost(filepath);
-      return carry;
-    }, {});
-
-  const pagesMapP: { [filepath: string]: Promise<IPage> } = files
-    .filter(filename => !!path.basename(filename).match(/\.tsx?$/i))
-    .reduce<{ [filepath: string]: Promise<IPage> }>((carry, filepath) => {
-      const defaultExport = require(filepath).default;
-      /** .tsx files with a default export are used as 'pages' */
-      if (typeof defaultExport === "function") {
-        carry[filepath] = Promise.resolve<IPage>({
-          title: path.basename(filepath),
-          body: <div className="Post">{defaultExport()}</div>,
-        });
-      }
-      return carry;
-    }, {});
-
-  const pagesP = Promise.all(Object.values(pagesMapP));
-  const postsP = Promise.all(Object.values(postsMapP));
-
-  const writesP = Object.entries({ ...postsMapP, ...pagesMapP }).map(
-    async ([filepath, pageP]): Promise<string> => {
-      const [page, pages, posts] = await Promise.all([pageP, pagesP, postsP]);
-      const htmlP = renderToStaticMarkup(filepath, page, pages, posts);
-      const filenameWithoutExtMatch = filepath.match(/^(.+)\.(tsx?|md)$/i);
-      if (filenameWithoutExtMatch) {
-        const filenameWithoutExt = path.relative(__dirname, filenameWithoutExtMatch[1]);
-        const outDir = path.join(__dirname, "..", "out", filenameWithoutExt).toLowerCase();
-        const createDirP = promisify(mkdirp)(outDir);
-        return Promise.all([createDirP, htmlP]).then(async ([_, html]) => {
-          const writePath = path.join(outDir, "index.html");
-          // const minified = await minify(html);
-
-          await promisify(fs.writeFile)(writePath, html, { encoding: "utf8" });
-          return writePath;
-        });
-      }
-      return Promise.reject(new Error(`${filepath} does not match legal regex`));
-    },
+  siteFiles: Promise<string[]> = promisify(glob)(`${sitePath}/**/*.{tsx,md}`),
+): Promise<Array<Promise<string>>> =>
+  Promise.all([
+    siteFiles.then(files =>
+      files
+        .filter(filename => !!path.basename(filename).match(/\.md$/i))
+        .reduce<{ [filepath: string]: Promise<IPost> }>((carry, filepath) => {
+          carry[filepath] = PostsContext.convertFileToPost(filepath);
+          return carry;
+        }, {}),
+    ),
+    siteFiles.then(files =>
+      files
+        .filter(filename => !!path.basename(filename).match(/\.tsx?$/i))
+        .reduce<{ [filepath: string]: Promise<IPage> }>((carry, filepath) => {
+          const defaultExport = require(filepath).default;
+          /** .tsx files with a default export are used as 'pages' */
+          if (typeof defaultExport === "function") {
+            carry[filepath] = Promise.resolve<IPage>({
+              title: path.basename(filepath),
+              body: <div className="Post">{defaultExport()}</div>,
+            });
+          }
+          return carry;
+        }, {}),
+    ),
+  ]).then(([postsMap, pagesMap]) =>
+    Object.entries({ ...postsMap, ...pagesMap }).map(([filepath, pageP]) =>
+      Promise.all([
+        pageP,
+        Promise.all(Object.values(pagesMap)),
+        Promise.all(Object.values(postsMap)),
+      ]).then(([page, pages, posts]) => writeOutFile(filepath, page, pages, posts)),
+    ),
   );
 
-  return Promise.all(writesP);
-};
-
-console.info("Regerating site...");
-((startTime = Date.now()) =>
-  getSiteFiles()
-    .then(files => {
-      console.table(files);
-      console.info(`Regenerated in: ${Date.now() - startTime}ms`);
-    })
-    .catch((reason: Error) => {
-      console.error(reason.message);
-    }))();
+(async (startTime = Date.now()) => {
+  console.info("Regerating site...");
+  const writes = await getSiteFiles();
+  const filesWritten = await Promise.all(writes);
+  console.table(filesWritten);
+  console.info(`Site regenerated in ${Date.now() - startTime}ms`);
+})();

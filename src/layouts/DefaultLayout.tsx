@@ -35,27 +35,28 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
     </div>
     <div className="Body" style={{ gridArea: " body" }}>
       {children}
-      <div
-        className="Posts"
-        style={{
-          position: "fixed",
-          top: 0,
-          right: 0,
-          background: "white",
-          border: "1px solid grey",
-        }}
-      >
-        <ul>
-          {posts.map(post => (
-            <li key={post.title}>
-              <a href={`/posts/${post.title}`}>{post.title}</a>
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
     <div className="Footer" style={{ gridArea: "footer" }}>
       All content copyright Evan Louie © {new Date().getFullYear()} • All rights reserved.
+    </div>
+    <div
+      className="Posts"
+      style={{
+        position: "fixed",
+        top: 0,
+        right: 0,
+        background: "white",
+        border: "1px solid grey",
+        maxWidth: "15em",
+      }}
+    >
+      <ul>
+        {posts.map(post => (
+          <li key={post.title}>
+            <a href={`/posts/${post.title}`}>{post.title}</a>
+          </li>
+        ))}
+      </ul>
     </div>
   </div>
 );

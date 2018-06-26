@@ -78,7 +78,7 @@ class WebWorker {
     const runnable = new Blob([response], { type: "text/javascript" });
     const worker = new Worker(URL.createObjectURL(runnable));
     const answer = new Promise<T>((resolve, reject) => {
-      worker.onmessage = messageEvent => resolve(messageEvent.data);
+      worker.onmessage = (messageEvent) => resolve(messageEvent.data);
       worker.onerror = () => reject("Error within worker");
     });
     worker.postMessage("Get to work!");
@@ -134,7 +134,7 @@ class ExternalMergeSort {
 const randomNumbers: number[] = Array(10000)
   .fill(undefined)
   .map(() => Math.round(Math.random() * 100000));
-ExternalMergeSort.sort(randomNumbers).then(sorted => console.info("Done:", sorted));
+ExternalMergeSort.sort(randomNumbers).then((sorted) => console.info("Done:", sorted));
 ```
 
 Now lets explain:

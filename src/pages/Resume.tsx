@@ -579,7 +579,7 @@ export const Resume: React.StatelessComponent<IResume> = (
       </div>
       <div className="responsibilities">
         <DotlessUl>
-          {responsibilities.map(responsibility => (
+          {responsibilities.map((responsibility) => (
             <li key={responsibility}>
               <InlineIcon>
                 <svg viewBox="0 0 1792 1792">

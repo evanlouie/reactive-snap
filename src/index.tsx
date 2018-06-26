@@ -6,9 +6,9 @@ import React from "react";
 import ReactDOMServer from "react-dom/server";
 import { promisify } from "util";
 import { Post } from "./components/Post";
-import { PostsContext } from "./contexts/PostsContext";
+import { convertFileToPost, PostsContext } from "./contexts/PostsContext";
 import { DefaultLayout } from "./layouts/DefaultLayout";
-import { File, minify } from "./server/File";
+import { File, getCSS, minify } from "./server/File";
 import { IPage, IPost } from "./types";
 
 interface IAppState {
@@ -35,7 +35,7 @@ const App: React.StatelessComponent<IAppState> = ({ pages, posts, children, titl
     <body>
       <PostsContext posts={posts}>
         <PostsContext.Consumer>
-          {postsState => (
+          {(postsState) => (
             <div className="PostsConsumer">
               <DefaultLayout pages={pages} posts={postsState.posts}>
                 {children}
@@ -54,7 +54,7 @@ const renderToStaticMarkup = async (
   pages: IPage[],
   posts: IPost[],
 ): Promise<string> =>
-  File.getCSS().then(css =>
+  getCSS().then((css) =>
     ReactDOMServer.renderToStaticMarkup(
       !!filepath.match(/\.md$/i) ? (
         <App posts={posts} pages={pages} title={(content as IPost).title} css={css}>
@@ -72,7 +72,12 @@ const renderToStaticMarkup = async (
     ),
   );
 
-const writeOutFile = async (filepath: string, page: IPage, pages: IPage[], posts: IPost[]) =>
+const writeOutFile = async (
+  filepath: string,
+  page: IPage,
+  pages: IPage[],
+  posts: IPost[],
+): Promise<string> =>
   ((validFile = filepath.match(/^(.+)\.(tsx?|md)$/i)) =>
     validFile
       ? ((
@@ -93,17 +98,17 @@ const getSiteFiles = async (
   siteFiles: Promise<string[]> = promisify(glob)(`${sitePath}/**/*.{tsx,md}`),
 ): Promise<Array<Promise<string>>> =>
   Promise.all([
-    siteFiles.then(files =>
+    siteFiles.then((files) =>
       files
-        .filter(filename => !!path.basename(filename).match(/\.md$/i))
+        .filter((filename) => !!path.basename(filename).match(/\.md$/i))
         .reduce<{ [filepath: string]: Promise<IPost> }>((carry, filepath) => {
-          carry[filepath] = PostsContext.convertFileToPost(filepath);
+          carry[filepath] = convertFileToPost(filepath);
           return carry;
         }, {}),
     ),
-    siteFiles.then(files =>
+    siteFiles.then((files) =>
       files
-        .filter(filename => !!path.basename(filename).match(/\.tsx?$/i))
+        .filter((filename) => !!path.basename(filename).match(/\.tsx?$/i))
         .reduce<{ [filepath: string]: Promise<IPage> }>((carry, filepath) => {
           const defaultExport = require(filepath).default;
           /** .tsx files with a default export are used as 'pages' */

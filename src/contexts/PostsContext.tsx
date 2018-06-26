@@ -11,88 +11,15 @@ interface IState {
 }
 
 export class PostsContext extends React.Component<IState, IState> {
-  public static async convertMarkdownToHTML(markdown: string): Promise<string> {
-    const html: string = marked.parse(markdown, {
-      highlight: code => HighlightJS.highlightAuto(code).value,
-    });
-
-    return html;
-  }
-
-  public static async convertFileToPost(filepath: string): Promise<IPost> {
-    const readFile = promisify(fs.readFile);
-    const filename = path.basename(filepath);
-    const filedir = path.dirname(filepath);
-    const fileContent = await readFile(filepath, { encoding: "utf8" });
-    const frontMatterRegex = /^---([^-]+)---((.|\n)+)$/i.exec(fileContent);
-    const frontMatter: Map<string, string> = frontMatterRegex
-      ? frontMatterRegex[1]
-          .trim()
-          .split("\n")
-          .map(line => line.split(":").map(s => s.trim()))
-          .reduce((map, pair) => map.set(pair[0], pair[1]), new Map())
-      : new Map();
-    const html = await this.convertMarkdownToHTML(
-      frontMatterRegex ? frontMatterRegex[2] : fileContent,
-    );
-    const filenameFormatCorrect = filename.match(/(\d{4}-\d{2}-\d{2})-(.+)/i);
-
-    return {
-      title: filenameFormatCorrect ? filenameFormatCorrect[2].replace("-", " ") : filename,
-      body: <div dangerouslySetInnerHTML={{ __html: html }} />,
-      postDate: filenameFormatCorrect ? new Date(filenameFormatCorrect[1]) : new Date(),
-    };
-  }
-
-  public static async convertFilesToPosts(filepaths: string[]): Promise<IPost[]> {
-    const posts = await Promise.all(
-      filepaths.map(filepath => {
-        return PostsContext.convertFileToPost(filepath);
-      }),
-    );
-
-    return posts;
-  }
-
-  public static async getPosts(): Promise<IPost[]> {
-    const readdir = promisify(fs.readdir);
-    const readFile = promisify(fs.readFile);
-    const postsDir = path.join(__dirname, "..", "posts");
-    const filenames = await readdir(postsDir);
-    const markdownFiles = await Promise.all(
-      filenames.map(filename => {
-        const filepath = path.join(postsDir, filename);
-        return readFile(filepath, { encoding: "utf8" });
-      }),
-    );
-    const posts: IPost[] = filenames.map((filename, index) => {
-      return {
-        body: marked.parse(markdownFiles[index], {
-          highlight: code => HighlightJS.highlightAuto(code).value,
-        }),
-        postDate: new Date() /** @TODO how to store date? */,
-        title: filename,
-      };
-    });
-
-    return posts;
-  }
-
-  public static async state() {
-    return {
-      posts: await this.getPosts(),
-    };
-  }
-
   private static context: React.Context<IState>;
 
-  private static defaultState: IState = {
+  private static readonly defaultState: IState = {
     posts: [],
   };
 
   private static get Context() {
     if (!this.context) {
-      this.context = React.createContext<IState>({ ...this.defaultState }) as React.Context<IState>;
+      this.context = React.createContext<IState>(this.defaultState) as React.Context<IState>;
     }
     return this.context;
   }
@@ -111,3 +38,29 @@ export class PostsContext extends React.Component<IState, IState> {
     return <Provider value={this.state}>{this.props.children}</Provider>;
   }
 }
+
+const getTitle = async (filepath: string): Promise<string> =>
+  ((filename = path.basename(filepath)) =>
+    filename.match(/\.(md|markdown)$/i) ? filename.replace("-", " ").split(".")[0] : filename)();
+
+const convertMarkdownToHTML = async (markdown: string): Promise<string> =>
+  marked.parse(markdown, {
+    highlight: (code) => HighlightJS.highlightAuto(code).value,
+  });
+
+export const getWritePath = async (filepath: string): Promise<string> =>
+  ((fileDirectory = path.dirname(filepath)) => `${fileDirectory}/${getTitle(filepath)}`)();
+
+export const convertFileToPost = async (filepath: string): Promise<IPost> =>
+  ((
+    readFile = promisify(fs.readFile),
+    filename = path.basename(filepath),
+    // filedir = path.dirname(filepath),
+  ) =>
+    readFile(filepath, { encoding: "utf8" })
+      .then((content) => Promise.all([convertMarkdownToHTML(content), getTitle(filepath)]))
+      .then(([html, title], date = filename.match(/(\d{4}-\d{2}-\d{2})-(.+)/i)) => ({
+        title,
+        body: <div dangerouslySetInnerHTML={{ __html: html }} />,
+        postDate: date ? new Date(date[1]) : new Date(),
+      })))();

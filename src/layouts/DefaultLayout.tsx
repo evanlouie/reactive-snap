@@ -26,12 +26,14 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
     }}
   >
     <div className="Header" style={{ gridArea: "header" }}>
-      <span className="InlineIcon" style={{ display: "inline-block", width: "3em" }}>
-        <Logo />
-      </span>
+      <a href="/">
+        <span className="InlineIcon" style={{ display: "inline-block", width: "3em" }}>
+          <Logo />
+        </span>
+      </a>
     </div>
     <div className="Menu" style={{ gridArea: "menu" }}>
-      <ul>{pages.map(page => <li key={page.title}>{page.title}</li>)}</ul>
+      <ul>{pages.map((page) => <li key={page.title}>{page.title}</li>)}</ul>
     </div>
     <div className="Body" style={{ gridArea: " body" }}>
       {children}
@@ -39,7 +41,7 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
     <div className="Footer" style={{ gridArea: "footer" }}>
       All content copyright Evan Louie © {new Date().getFullYear()} • All rights reserved.
     </div>
-    {/* <div
+    <div
       className="Posts"
       style={{
         position: "fixed",
@@ -51,12 +53,12 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
       }}
     >
       <ul>
-        {posts.map(post => (
+        {posts.map((post) => (
           <li key={post.title}>
             <a href={`/posts/${post.title}`}>{post.title}</a>
           </li>
         ))}
       </ul>
-    </div> */}
+    </div>
   </div>
 );

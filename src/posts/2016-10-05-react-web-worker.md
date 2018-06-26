@@ -81,7 +81,7 @@ if (typeof Worker !== "undefined") {
   const response = `self.onmessage=function(){postMessage(eval((${answer})()))}`; // Wrap workers onmessage lambda
   const runnable = new Blob([response], { type: "text/javascript" }); // Make a runnable JS blob
   const worker = new Worker(window.URL.createObjectURL(runnable)); // Bind the runnable blob to the a URL and create a worker
-  worker.onmessage = e => {
+  worker.onmessage = (e) => {
     console.log("Received: " + e.data); // Log the response from the worker
   };
   worker.postMessage("WORK!!!"); // Start the worker.

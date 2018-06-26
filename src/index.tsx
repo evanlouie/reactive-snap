@@ -27,7 +27,11 @@ const App: React.StatelessComponent<IAppState> = ({ pages, posts, children, titl
         rel="stylesheet"
         href={encodeURI("https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono|Roboto+Slab")}
       />
-      <link href={encodeURI("https://fonts.googleapis.com/css?family=VT323")} rel="stylesheet" />
+      <link rel="stylesheet" href={encodeURI("https://fonts.googleapis.com/css?family=VT323")} />
+      <link
+        rel="stylesheet"
+        href={encodeURI("https://cdn.rawgit.com/tonsky/FiraCode/1.205/distr/fira_code.css")}
+      />
       <style dangerouslySetInnerHTML={{ __html: File.normalizecss }} />
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <script dangerouslySetInnerHTML={{ __html: File.turbolinks }} />

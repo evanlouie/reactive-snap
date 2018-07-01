@@ -52,6 +52,8 @@ const App: React.StatelessComponent<IAppState> = ({ pages, posts, children, titl
   </html>
 );
 
+const foo = (args: { foo: string }) => ((safeArgs = { foo: "bar", ...args }) => safeArgs)();
+
 const renderToStaticMarkup = async (
   filepath: string,
   content: IPage | IPost,
@@ -97,6 +99,42 @@ const writeOutFile = async (
           ))()
       : Promise.reject(new Error(`${filepath} does not match legal regex`)))();
 
+const gsf = async (userArgs: { sitePath?: string; siteFiles?: Promise<string[]> }) =>
+  ((params = { ...userArgs, sitePath: path.join(__dirname) }) => params)();
+
+const pages = async <T extends {}>(
+  sitePath: string = path.join(__dirname),
+  siteFiles = promisify(glob)(`${sitePath}/**/*.{tsx,md}`),
+  fileConverters = [
+    [
+      /\.md$/i,
+      (carry: T[], filepath: string) => ({ ...carry, [filepath]: convertFileToPost(filepath) }),
+    ],
+    [
+      /\.tsx?$/i,
+      (carry: T[], filepath: string) =>
+        ((defaultExport = require(filepath).default) =>
+          typeof defaultExport === "function"
+            ? {
+                ...carry,
+                [filepath]: Promise.resolve<IPage>({
+                  title: path.basename(filepath),
+                  body: <div className="Post">{defaultExport()}</div>,
+                  tags: [],
+                  filepath,
+                }),
+              }
+            : carry)(),
+    ],
+  ],
+) =>
+  siteFiles.then((files) =>
+    files.reduce<{ [filepath: string]: Promise<string> }>(
+      (site, filepath) => ({ ...site, [filepath]: Promise.resolve(filepath) }),
+      {},
+    ),
+  );
+
 const getSiteFiles = async (
   sitePath: string = path.join(__dirname),
   siteFiles: Promise<string[]> = promisify(glob)(`${sitePath}/**/*.{tsx,md}`),
@@ -122,6 +160,8 @@ const getSiteFiles = async (
                     [filepath]: Promise.resolve<IPage>({
                       title: path.basename(filepath),
                       body: <div className="Post">{defaultExport()}</div>,
+                      tags: [],
+                      filepath,
                     }),
                   }
                 : carry)(),
@@ -129,9 +169,9 @@ const getSiteFiles = async (
         ),
     ),
   ]).then(([postsMap, pagesMap]) =>
-    Object.entries({ ...postsMap, ...pagesMap }).map(([filepath, pageP]) =>
+    Object.entries({ ...postsMap, ...pagesMap }).map(([filepath, pageGenerating]) =>
       Promise.all([
-        pageP,
+        pageGenerating,
         Promise.all(Object.values(pagesMap)),
         Promise.all(Object.values(postsMap)),
       ]).then(([page, pages, posts]) => writeOutFile(filepath, page, pages, posts)),

@@ -39,17 +39,13 @@ export class PostsContext extends React.Component<IState, IState> {
   }
 }
 
-const getTitle = async (filepath: string): Promise<string> =>
-  ((filename = path.basename(filepath)) =>
-    filename.match(/\.(md|markdown)$/i) ? filename.replace("-", " ").split(".")[0] : filename)();
-
 const convertMarkdownToHTML = async (markdown: string): Promise<string> =>
   marked.parse(markdown, {
     highlight: (code) => HighlightJS.highlightAuto(code).value,
   });
 
-export const getWritePath = async (filepath: string): Promise<string> =>
-  ((fileDirectory = path.dirname(filepath)) => `${fileDirectory}/${getTitle(filepath)}`)();
+export const getWritePath = async (post: IPost): Promise<string> =>
+  ((fileDirectory = path.dirname(post.filepath)) => `${fileDirectory}/${post.title}`)();
 
 export const convertFileToPost = async (filepath: string): Promise<IPost> =>
   ((
@@ -58,9 +54,13 @@ export const convertFileToPost = async (filepath: string): Promise<IPost> =>
     // filedir = path.dirname(filepath),
   ) =>
     readFile(filepath, { encoding: "utf8" })
-      .then((content) => Promise.all([convertMarkdownToHTML(content), getTitle(filepath)]))
-      .then(([html, title], date = filename.match(/(\d{4}-\d{2}-\d{2})-(.+)/i)) => ({
-        title,
+      .then((content) => Promise.all([convertMarkdownToHTML(content)]))
+      .then(([html], date = filename.match(/(\d{4}-\d{2}-\d{2})-(.+)/i)) => ({
+        title: path.basename(filepath).match(/\.(md|markdown)$/i)
+          ? filename.replace("-", " ").split(".")[0]
+          : filename,
         body: <div dangerouslySetInnerHTML={{ __html: html }} />,
         postDate: date ? new Date(date[1]) : new Date(),
+        tags: [],
+        filepath,
       })))();

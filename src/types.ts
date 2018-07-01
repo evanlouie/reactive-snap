@@ -3,6 +3,8 @@ import React from "react";
 export interface IPage {
   title: string;
   body: React.ReactNode;
+  tags: string[];
+  filepath: string;
 }
 export interface IPost extends IPage {
   postDate: Date;

@@ -1,5 +1,5 @@
 import React, { StatelessComponent } from "react";
-import { Icons } from "../server/Icons";
+import { Logo } from "../server/Icons";
 import { ILayout } from "../types";
 
 export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts, children }) => (
@@ -20,7 +20,7 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
     <div className="Header" style={{ gridArea: "header" }}>
       <a href="/">
         <span className="InlineIcon" style={{ display: "inline-block", width: "3em" }}>
-          <Icons.Logo />
+          <Logo />
         </span>
       </a>
     </div>

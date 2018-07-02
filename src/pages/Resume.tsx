@@ -1,5 +1,5 @@
 import React, { StatelessComponent } from "react";
-import { Icons } from "../server/Icons";
+import { C, Go, Java, Kubernetes, PHP, Redis, Ruby, Typescript, Webpack } from "../server/Icons";
 
 interface IJob {
   company: string;
@@ -144,42 +144,42 @@ const resume: IResume = {
     {
       skill: "Distributed",
       tools: ["Kubernetes", "Docker", "Databricks/Apache Spark", "Apache ZooKeeper", "MPI"],
-      Icon: Icons.Kubernetes,
+      Icon: Kubernetes,
     },
     {
       skill: "TypeScript/JavaScript",
       tools: ["Node.js", "Nest", "TypeORM", "Koa.js", "React", "Redux", "Vue.js", "jQuery"],
-      Icon: Icons.Typescript,
+      Icon: Typescript,
     },
     {
       skill: "Scala/Java",
       tools: ["Databricks/Apache Spark"],
-      Icon: Icons.Javascript,
+      Icon: Java,
     },
     {
       skill: "PHP",
       tools: ["Symfony", "Wordpress", "CraftCMS"],
-      Icon: Icons.PHP,
+      Icon: PHP,
     },
     {
       skill: "Ruby",
       tools: ["Rails", "Sinatra"],
-      Icon: Icons.Ruby,
+      Icon: Ruby,
     },
     {
       skill: "Go",
       tools: ["Hugo"],
-      Icon: Icons.Ruby,
+      Icon: Go,
     },
     {
       skill: "C/C++",
       tools: ["Boost", "OpenGL"],
-      Icon: Icons.C,
+      Icon: C,
     },
     {
       skill: "Database/KV Store",
       tools: ["Azure Cosmos DB", "PostgreSQL", "MySQL/MariaDB", "MongoDB", "SQLite", "Redis"],
-      Icon: Icons.Redis,
+      Icon: Redis,
     },
     {
       skill: "Web Development",
@@ -192,178 +192,172 @@ const resume: IResume = {
         "Google AMP",
         "Progressive Web Apps",
       ],
-      Icon: Icons.Webpack,
+      Icon: Webpack,
     },
   ],
 };
+const monthMap: { [month: number]: string } = {
+  1: "January",
+  2: "February",
+  3: "March",
+  4: "April",
+  5: "May",
+  6: "June",
+  7: "July",
+  8: "August",
+  9: "September",
+  10: "October",
+  11: "November",
+  12: "December",
+};
+
+const InlineIcon: StatelessComponent = ({ children }) => (
+  <span
+    className="InlineIcon"
+    style={{
+      display: "inline-block",
+      width: "1em",
+      height: "1em",
+      margin: "auto 0.5em",
+      verticalAlign: "middle",
+    }}
+  >
+    {children}
+  </span>
+);
+
+const Section: StatelessComponent<{ heading: string; className: string }> = ({
+  children,
+  className,
+  heading,
+}) => (
+  <section
+    className={`Section ${className}`}
+    style={{ borderTop: "1px solid #eee", marginTop: "1em" }}
+  >
+    <h3 className="title">{heading}</h3>
+    {children}
+  </section>
+);
+
+const NoStyleUL: StatelessComponent = ({ children }) => (
+  <ul className="NoStyleUL" style={{ listStyle: "none", paddingLeft: "0.25em", margin: "0" }}>
+    {children}
+  </ul>
+);
+
+const Skill: StatelessComponent<ISkill> = ({ skill, tools, Icon }) => (
+  <li key={skill}>
+    <InlineIcon>
+      <Icon />
+    </InlineIcon>
+    <strong>{skill}: </strong>
+    {tools.map((tool, index) => `${tool}${index !== tools.length - 1 ? ", " : ""}`)}
+  </li>
+);
+
+const Job: StatelessComponent<IJob> = ({
+  company,
+  title,
+  description,
+  website,
+  startDate,
+  endDate,
+  responsibilities,
+  technologies,
+}) => (
+  <div
+    key={company + title}
+    className="job"
+    style={{ display: "flex", flexDirection: "column", flexWrap: "wrap", marginTop: "1em" }}
+  >
+    <div
+      className="placement"
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+      }}
+    >
+      <span className="company">
+        <a href={website}>{company}</a>
+      </span>
+      <span className="duration">
+        {`${monthMap[startDate.getMonth() + 1]} ${startDate.getFullYear()} - `}
+        {endDate ? `${monthMap[endDate.getMonth() + 1]} ${endDate.getFullYear()}` : "Present"}
+      </span>
+    </div>
+    <div className="role">
+      <em>{title}</em>
+    </div>
+    <div className="description">
+      <strong>{description}</strong>
+    </div>
+    <div className="technologies">
+      <InlineIcon>
+        <svg viewBox="0 0 1792 1792">
+          <path d="M553 1399l-50 50q-10 10-23 10t-23-10L-9 983q-10-10-10-23t10-23l466-466q10-10 23-10t23 10l50 50q10 10 10 23t-10 23L160 960l393 393q10 10 10 23t-10 23zm591-1067L771 1623q-4 13-15.5 19.5T732 1645l-62-17q-13-4-19.5-15.5T648 1588l373-1291q4-13 15.5-19.5t23.5-2.5l62 17q13 4 19.5 15.5t2.5 24.5zm657 651l-466 466q-10 10-23 10t-23-10l-50-50q-10-10-10-23t10-23l393-393-393-393q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l466 466q10 10 10 23t-10 23z" />
+        </svg>
+      </InlineIcon>
+      <code>
+        {technologies.map(
+          (tech, index) => `${tech}${index !== technologies.length - 1 ? ", " : ""}`,
+        )}
+      </code>
+    </div>
+    <div className="responsibilities">
+      <NoStyleUL>
+        {responsibilities.map((responsibility) => (
+          <li key={responsibility}>
+            <InlineIcon>
+              <svg viewBox="0 0 1792 1792">
+                <path d="M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45L531 45q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z" />
+              </svg>
+            </InlineIcon>
+            {responsibility}
+          </li>
+        ))}
+      </NoStyleUL>
+    </div>
+  </div>
+);
+
+const Education: StatelessComponent<IEducation> = ({ school, degree, website, conferralDate }) => (
+  <div
+    key={school + degree}
+    className="education"
+    style={{ display: "flex", flexDirection: "column" }}
+  >
+    <div
+      className="convocation"
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+      }}
+    >
+      <span className="school">
+        <a href={website}>{school}</a>
+      </span>
+      <span className="conferred">
+        {monthMap[conferralDate.getMonth()] + " " + conferralDate.getFullYear()}
+      </span>
+    </div>
+    <div className="degree">
+      <InlineIcon>
+        <svg viewBox="0 0 1792 1792">
+          <path d="M1518 836l18 316q4 69-82 128t-235 93.5-323 34.5-323-34.5-235-93.5-82-128l18-316 574 181q22 7 48 7t48-7zm530-324q0 23-22 31L906 895q-4 1-10 1t-10-1L234 689q-43 34-71 111.5T129 979q63 36 63 109 0 69-58 107l58 433q2 14-8 25-9 11-24 11H-32q-15 0-24-11-10-11-8-25l58-433q-58-38-58-107 0-73 65-111 11-207 98-330l-333-104q-22-8-22-31t22-31L886 129q4-1 10-1t10 1l1120 352q22 8 22 31z" />
+        </svg>
+      </InlineIcon>
+      {degree}
+    </div>
+  </div>
+);
 
 export const Resume: React.StatelessComponent<IResume> = (props) =>
   (({ profile, education, experience, skills } = { ...resume, ...props }) => {
-    const monthMap: { [month: number]: string } = {
-      1: "January",
-      2: "February",
-      3: "March",
-      4: "April",
-      5: "May",
-      6: "June",
-      7: "July",
-      8: "August",
-      9: "September",
-      10: "October",
-      11: "November",
-      12: "December",
-    };
-
-    const InlineIcon: StatelessComponent = ({ children }) => (
-      <span
-        className="InlineIcon"
-        style={{
-          display: "inline-block",
-          width: "1em",
-          height: "1em",
-          margin: "auto 0.5em",
-          verticalAlign: "middle",
-        }}
-      >
-        {children}
-      </span>
-    );
-
-    const Section: StatelessComponent<{ heading: string; className: string }> = ({
-      children,
-      className,
-      heading,
-    }) => (
-      <section
-        className={`Section ${className}`}
-        style={{ borderTop: "1px solid #eee", marginTop: "1em" }}
-      >
-        <h3 className="title">{heading}</h3>
-        {children}
-      </section>
-    );
-
-    const NoStyleUL: StatelessComponent = ({ children }) => (
-      <ul className="NoStyleUL" style={{ listStyle: "none", paddingLeft: "0.25em", margin: "0" }}>
-        {children}
-      </ul>
-    );
-
-    const Skill: StatelessComponent<ISkill> = ({ skill, tools, Icon }) => (
-      <li key={skill}>
-        <InlineIcon>
-          <Icon />
-        </InlineIcon>
-        <strong>{skill}: </strong>
-        {tools.map((tool, index) => `${tool}${index !== tools.length - 1 ? ", " : ""}`)}
-      </li>
-    );
-
-    const Job: StatelessComponent<IJob> = ({
-      company,
-      title,
-      description,
-      website,
-      startDate,
-      endDate,
-      responsibilities,
-      technologies,
-    }) => (
-      <div
-        key={company + title}
-        className="job"
-        style={{ display: "flex", flexDirection: "column", flexWrap: "wrap", marginTop: "1em" }}
-      >
-        <div
-          className="placement"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-          }}
-        >
-          <span className="company">
-            <a href={website}>{company}</a>
-          </span>
-          <span className="duration">
-            {`${monthMap[startDate.getMonth() + 1]} ${startDate.getFullYear()} - `}
-            {endDate ? `${monthMap[endDate.getMonth() + 1]} ${endDate.getFullYear()}` : "Present"}
-          </span>
-        </div>
-        <div className="role">
-          <em>{title}</em>
-        </div>
-        <div className="description">
-          <strong>{description}</strong>
-        </div>
-        <div className="technologies">
-          <InlineIcon>
-            <svg viewBox="0 0 1792 1792">
-              <path d="M553 1399l-50 50q-10 10-23 10t-23-10L-9 983q-10-10-10-23t10-23l466-466q10-10 23-10t23 10l50 50q10 10 10 23t-10 23L160 960l393 393q10 10 10 23t-10 23zm591-1067L771 1623q-4 13-15.5 19.5T732 1645l-62-17q-13-4-19.5-15.5T648 1588l373-1291q4-13 15.5-19.5t23.5-2.5l62 17q13 4 19.5 15.5t2.5 24.5zm657 651l-466 466q-10 10-23 10t-23-10l-50-50q-10-10-10-23t10-23l393-393-393-393q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l466 466q10 10 10 23t-10 23z" />
-            </svg>
-          </InlineIcon>
-          <code>
-            {technologies.map(
-              (tech, index) => `${tech}${index !== technologies.length - 1 ? ", " : ""}`,
-            )}
-          </code>
-        </div>
-        <div className="responsibilities">
-          <NoStyleUL>
-            {responsibilities.map((responsibility) => (
-              <li key={responsibility}>
-                <InlineIcon>
-                  <svg viewBox="0 0 1792 1792">
-                    <path d="M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45L531 45q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z" />
-                  </svg>
-                </InlineIcon>
-                {responsibility}
-              </li>
-            ))}
-          </NoStyleUL>
-        </div>
-      </div>
-    );
-
-    const Education: StatelessComponent<IEducation> = ({
-      school,
-      degree,
-      website,
-      conferralDate,
-    }) => (
-      <div
-        key={school + degree}
-        className="education"
-        style={{ display: "flex", flexDirection: "column" }}
-      >
-        <div
-          className="convocation"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-          }}
-        >
-          <span className="school">
-            <a href={website}>{school}</a>
-          </span>
-          <span className="conferred">{`${
-            monthMap[conferralDate.getMonth()]
-          } ${conferralDate.getFullYear()}`}</span>
-        </div>
-        <div className="degree">
-          <InlineIcon>
-            <svg viewBox="0 0 1792 1792">
-              <path d="M1518 836l18 316q4 69-82 128t-235 93.5-323 34.5-323-34.5-235-93.5-82-128l18-316 574 181q22 7 48 7t48-7zm530-324q0 23-22 31L906 895q-4 1-10 1t-10-1L234 689q-43 34-71 111.5T129 979q63 36 63 109 0 69-58 107l58 433q2 14-8 25-9 11-24 11H-32q-15 0-24-11-10-11-8-25l58-433q-58-38-58-107 0-73 65-111 11-207 98-330l-333-104q-22-8-22-31t22-31L886 129q4-1 10-1t10 1l1120 352q22 8 22 31z" />
-            </svg>
-          </InlineIcon>
-          {degree}
-        </div>
-      </div>
-    );
-
     return (
       <div className="Resume">
         <article className="content resume">

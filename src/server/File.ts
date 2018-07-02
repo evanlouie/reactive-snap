@@ -4,35 +4,41 @@ import sass from "node-sass";
 import path from "path";
 import { promisify } from "util";
 
-export class File {
-  private static _cache: Map<string, string> = new Map();
+const _cache: { [key: string]: string } = {};
+const getFile = async (pathname: string, cache = _cache): Promise<string> =>
+  !!cache[pathname]
+    ? cache[pathname]
+    : promisify(fs.readFile)(pathname, { encoding: "utf8" })
+        .then((content) => (cache[pathname] = content))
+        .then(() => getFile(pathname));
 
-  private static getFile(pathname: string): string {
-    if (!this._cache.has(pathname)) {
-      this._cache.set(pathname, fs.readFileSync(pathname, { encoding: "utf8" }));
-    }
-    return this._cache.get(pathname) as string;
-  }
-
-  public static get turbolinks(): string {
-    return this.getFile(require.resolve("turbolinks"));
-  }
-
-  public static get normalizecss(): string {
-    return this.getFile(require.resolve("normalize.css"));
-  }
-}
+// export const highlightJS = () => getFile(require.resolve("highlight.js/lib/highlight.js"));
+export const turbolinks = () => getFile(require.resolve("turbolinks"));
+export const normalizeCSS = () => getFile(require.resolve("normalize.css"));
 
 export const minify = async (html: string): Promise<string> =>
   htmlMinifier.minify("<!DOCTYPE html>" + html, {
-    decodeEntities: true, // needed to excape html entities react uses for '/" in style attributes
+    decodeEntities: true, // needed to escape html entities react uses for '/" in style attributes
     minifyCSS: true,
     minifyJS: true,
   });
 
-export const getCSS = async ({ includePaths } = { includePaths: [__dirname] }): Promise<string> =>
+/**
+ * Convert `${__dirname}/server/styles.scss` to css
+ * @param includePaths Array of directory paths to to search through when using @import in scss files
+ */
+export const getCSS = async (includePaths = [__dirname]): Promise<string> =>
   promisify(fs.readFile)(path.join(__dirname, "styles.scss"), {
     encoding: "utf8",
   })
     .then((scss) => promisify(sass.render)({ data: scss, includePaths }))
     .then((result) => result.css.toString());
+
+/**
+ * Compress a CSS string using SASS render to compress
+ * @param css string to compress
+ */
+export const compressCSS = async (css: string): Promise<string> =>
+  promisify(sass.render)({ data: css, outputStyle: "compressed" }).then((result) =>
+    result.css.toString(),
+  );

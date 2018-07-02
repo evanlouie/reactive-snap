@@ -1,14 +1,6 @@
 import React, { StatelessComponent } from "react";
+import { Icons } from "../server/Icons";
 import { ILayout } from "../types";
-
-const Logo: StatelessComponent = () => (
-  <svg viewBox="0 0 189.5 189.5">
-    <path
-      fill="#6F6F6F"
-      d="M94.6.7L.7 94.8l94.1 93.9 93.9-94.1L94.6.7zm-6.3 109.4H51.4l11.2-71h36.9l-1.9 12h-23l-2.5 16h22.1l-1.9 12h-22l-3.1 19h23l-1.9 12zm3.1 43l11.2-71h13.9l-9.4 59h19.7l-1.9 12H91.4z"
-    />
-  </svg>
-);
 
 export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts, children }) => (
   <div
@@ -28,7 +20,7 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
     <div className="Header" style={{ gridArea: "header" }}>
       <a href="/">
         <span className="InlineIcon" style={{ display: "inline-block", width: "3em" }}>
-          <Logo />
+          <Icons.Logo />
         </span>
       </a>
     </div>

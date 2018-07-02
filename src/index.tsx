@@ -52,8 +52,6 @@ const App: React.StatelessComponent<IAppState> = ({ pages, posts, children, titl
   </html>
 );
 
-const foo = (args: { foo: string }) => ((safeArgs = { foo: "bar", ...args }) => safeArgs)();
-
 const renderToStaticMarkup = async (
   filepath: string,
   content: IPage | IPost,
@@ -99,10 +97,7 @@ const writeOutFile = async (
           ))()
       : Promise.reject(new Error(`${filepath} does not match legal regex`)))();
 
-const gsf = async (userArgs: { sitePath?: string; siteFiles?: Promise<string[]> }) =>
-  ((params = { ...userArgs, sitePath: path.join(__dirname) }) => params)();
-
-const pages = async <T extends {}>(
+const generateSite = async <T extends {}>(
   sitePath: string = path.join(__dirname),
   siteFiles = promisify(glob)(`${sitePath}/**/*.{tsx,md}`),
   fileConverters = [
@@ -113,13 +108,17 @@ const pages = async <T extends {}>(
     [
       /\.tsx?$/i,
       (carry: T[], filepath: string) =>
-        ((defaultExport = require(filepath).default) =>
-          typeof defaultExport === "function"
+        ((DefaultExport = require(filepath).default) =>
+          typeof DefaultExport === "function"
             ? {
                 ...carry,
                 [filepath]: Promise.resolve<IPage>({
                   title: path.basename(filepath),
-                  body: <div className="Post">{defaultExport()}</div>,
+                  body: (
+                    <div className="Post">
+                      <DefaultExport />
+                    </div>
+                  ),
                   tags: [],
                   filepath,
                 }),
@@ -153,13 +152,17 @@ const getSiteFiles = async (
         .filter((filename) => !!path.basename(filename).match(/\.tsx?$/i))
         .reduce<{ [filepath: string]: Promise<IPage> }>(
           (carry, filepath) =>
-            ((defaultExport = require(filepath).default) =>
-              typeof defaultExport === "function"
+            ((DefaultExport = require(filepath).default) =>
+              typeof DefaultExport === "function"
                 ? {
                     ...carry,
                     [filepath]: Promise.resolve<IPage>({
                       title: path.basename(filepath),
-                      body: <div className="Post">{defaultExport()}</div>,
+                      body: (
+                        <div className="Post">
+                          <DefaultExport />
+                        </div>
+                      ),
                       tags: [],
                       filepath,
                     }),

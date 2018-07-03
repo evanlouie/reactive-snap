@@ -357,7 +357,7 @@ const Education: StatelessComponent<IEducation> = ({ school, degree, website, co
 );
 
 export const Resume: React.StatelessComponent<IResume> = (props) =>
-  (({ profile, education, experience, skills } = { ...resume, ...props }) => {
+  (({ profile, education, experience, skills }) => {
     return (
       <div className="Resume">
         <article className="content resume">
@@ -376,6 +376,6 @@ export const Resume: React.StatelessComponent<IResume> = (props) =>
         </article>
       </div>
     );
-  })();
+  })({ ...resume, ...props });
 
 export default Resume;

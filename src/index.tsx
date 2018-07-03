@@ -8,7 +8,7 @@ import { promisify } from "util";
 import { Post } from "./components/Post";
 import { convertFileToPost, PostsContext } from "./contexts/PostsContext";
 import { DefaultLayout } from "./layouts/DefaultLayout";
-import { compressCSS, getCSS, minify, normalizeCSS, turbolinks } from "./server/File";
+import { compressCSS, compressJS, getCSS, minify, normalizeCSS, turbolinks } from "./server/File";
 import { IPage, IPost } from "./types";
 
 interface IAppState {
@@ -68,27 +68,30 @@ const renderToStaticMarkup = async (
   pages: IPage[],
   posts: IPost[],
 ): Promise<string> =>
-  Promise.all([
-    Promise.all([turbolinks()]),
-    Promise.all([normalizeCSS(), getCSS()]).then((styles) => Promise.all(styles.map(compressCSS))),
-  ]).then(([scripts, styles]) =>
-    ((title: string) =>
-      "<!DOCTYPE html>" +
-      ReactDOMServer.renderToStaticMarkup(
-        !!content.filepath.match(/\.md$/i) ? (
-          <App posts={posts} pages={pages} title={title} styles={styles} scripts={scripts}>
-            <Post {...content as IPost} />
-          </App>
-        ) : !!content.filepath.match(/\.tsx?$/i) ? (
-          <App posts={posts} pages={pages} title={title} styles={styles} scripts={scripts}>
-            <div className="Page__content">{content.body}</div>
-          </App>
+  (({ title, scripts, styles }: { title: string; scripts: string[]; styles: string[] }) =>
+    "<!DOCTYPE html>" +
+    ReactDOMServer.renderToStaticMarkup(
+      <App posts={posts} pages={pages} title={title} styles={styles} scripts={scripts}>
+        {content.filepath.match(/\.md$/i) ? (
+          <Post {...content as IPost} />
+        ) : content.filepath.match(/\.tsx?$/i) ? (
+          <div className="Page__content">{content.body}</div>
         ) : (
-          <App posts={posts} pages={pages} title={title} styles={styles} scripts={scripts}>
-            <div className="Page__content">Page format not supported</div>
-          </App>
-        ),
-      ))(content.title),
+          <div className="Page__content">Page format not supported</div>
+        )}
+      </App>,
+    ))(
+    await Promise.all([
+      content.title,
+      Promise.all([turbolinks()]).then((scripts) => Promise.all(scripts.map(compressJS))),
+      Promise.all([normalizeCSS(), getCSS()]).then((styles) =>
+        Promise.all(styles.map(compressCSS)),
+      ),
+    ]).then(([title, scripts, styles]) => ({
+      title,
+      scripts,
+      styles,
+    })),
   );
 
 const writeOutFile = async (
@@ -169,24 +172,11 @@ const getSiteFiles = async (
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 ////////////////////////////////////////////////////////////////////////////////
-(async (startTime = Date.now()) =>
+((startTime: number) =>
   Promise.resolve()
     .then(() => console.info("Regenerating site..."))
     .then(() => getSiteFiles())
     .then((fileWrites) => Promise.all(fileWrites))
     .then((files) => console.table(files))
     .then(() => console.info(`Site regenerated in: ${Date.now() - startTime}ms`))
-    .catch(console.error))();
-
-// (async (startTime = Date.now()) => {
-//   try {
-//     console.clear();
-//     console.info("Regenerating site...");
-//     const writes = await getSiteFiles();
-//     const filesWritten = await Promise.all(writes);
-//     console.table(filesWritten);
-//     console.info(`Site regenerated in: ${Date.now() - startTime}ms`);
-//   } catch (err) {
-//     console.error(err);
-//   }
-// })();
+    .catch(console.error))(Date.now());

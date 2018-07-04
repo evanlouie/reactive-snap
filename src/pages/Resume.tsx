@@ -359,12 +359,7 @@ const Education: StatelessComponent<IEducation> = ({ school, degree, website, co
   </div>
 );
 
-const Resume: React.StatelessComponent<IResume> = ({
-  profile,
-  education,
-  experience,
-  skills,
-}) => (
+const Resume: React.StatelessComponent<IResume> = ({ profile, education, experience, skills }) => (
   <article className="Resume">
     <Section className="profile" heading="Profile">
       <p className="body">{profile}</p>
@@ -381,4 +376,4 @@ const Resume: React.StatelessComponent<IResume> = ({
   </article>
 );
 
-export default (() => <Resume {...resume} />) as StatelessComponent<IResume>;
+export default (() => <Resume {...resume} />) as StatelessComponent;

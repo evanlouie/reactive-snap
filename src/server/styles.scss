@@ -5,9 +5,22 @@ $font-sans: "Helvetica Neue", Helvetica, "Raleway", "Roboto", sans-serif;
 $font-mono-inline: "VT323", monospace;
 $font-mono-block: "Fira Code", monospace;
 
+$light-grey: #e8e8e8;
+$grey: #828282;
+$black: #333333;
+
 body {
-  line-height: 1.4;
+  color: $black;
   font-family: $font-serif;
+  line-height: 1.4;
+
+  a {
+    color: unset;
+
+    &:hover {
+      color: $grey;
+    }
+  }
 
   h1,
   h2,
@@ -17,7 +30,6 @@ body {
   h6 {
     line-height: 1;
     font-family: $font-sans;
-    // font-weight: normal;
   }
 
   code {
@@ -26,7 +38,7 @@ body {
 
   pre {
     font-size: small;
-    border: 1px solid #e8e8e8;
+    border: 1px solid $light-grey;
     border-radius: 3px;
     padding: 1em;
     white-space: pre-wrap; // https://css-tricks.com/snippets/css/make-pre-text-wrap/

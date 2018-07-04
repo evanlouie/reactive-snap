@@ -6,6 +6,7 @@ export interface IPage {
   tags: string[];
   filepath: string;
 }
+
 export interface IPost extends IPage {
   postDate: Date;
 }

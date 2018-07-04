@@ -359,24 +359,26 @@ const Education: StatelessComponent<IEducation> = ({ school, degree, website, co
   </div>
 );
 
-export const Resume: React.StatelessComponent<IResume> = () => {
-  const { profile, education, experience, skills } = resume;
-  return (
-    <article className="Resume">
-      <Section className="profile" heading="Profile">
-        <p className="body">{profile}</p>
-      </Section>
-      <Section className="skills" heading="Skills">
-        <NoStyleUL>{skills.map(Skill)}</NoStyleUL>
-      </Section>
-      <Section className="experience" heading="Experience">
-        {experience.map(Job)}
-      </Section>
-      <Section className="education" heading="Education">
-        {education.map(Education)}
-      </Section>
-    </article>
-  );
-};
+export const Resume: React.StatelessComponent<IResume> = ({
+  profile,
+  education,
+  experience,
+  skills,
+}) => (
+  <article className="Resume">
+    <Section className="profile" heading="Profile">
+      <p className="body">{profile}</p>
+    </Section>
+    <Section className="skills" heading="Skills">
+      <NoStyleUL>{skills.map(Skill)}</NoStyleUL>
+    </Section>
+    <Section className="experience" heading="Experience">
+      {experience.map(Job)}
+    </Section>
+    <Section className="education" heading="Education">
+      {education.map(Education)}
+    </Section>
+  </article>
+);
 
-export default Resume;
+export default (() => <Resume {...resume} />) as StatelessComponent<IResume>;

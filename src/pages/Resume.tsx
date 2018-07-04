@@ -108,20 +108,20 @@ const resume: IResume = {
       startDate: new Date("August 2009"),
       title: "Software Developer | Azure Consultant | Containerization Strategist",
       description:
-        "Contractor specializing in distributed systems, containerization technologies, and Azure",
+        "Consultant specializing in web development, distributed systems, containerization technologies, and Azure",
       technologies: [
         "Kubernetes",
         "Docker",
         "Azure",
         "TypeScript (React, Nest)",
-        "PHP (Wordpress, CraftCMS)",
+        "PHP (WordPress, CraftCMS)",
         "Ruby (Rails)",
       ],
       responsibilities: [
         "Azure consultant specializing in highly available distributed systems.",
         "Give guidance on migrations towards containerized infrastructures.",
         "Architect micro-service ecosystems.",
-        "General full stack development.",
+        "General full stack web development.",
         "SEO Optimization, Google AMP and Analytics deployment.",
       ],
     },
@@ -158,7 +158,7 @@ const resume: IResume = {
     },
     {
       skill: "PHP",
-      tools: ["Symfony", "Wordpress", "CraftCMS"],
+      tools: ["Symfony", "WordPress", "CraftCMS"],
       Icon: PHP,
     },
     {
@@ -196,6 +196,7 @@ const resume: IResume = {
     },
   ],
 };
+
 const monthMap: { [month: number]: string } = {
   1: "January",
   2: "February",
@@ -356,26 +357,24 @@ const Education: StatelessComponent<IEducation> = ({ school, degree, website, co
   </div>
 );
 
-export const Resume: React.StatelessComponent<IResume> = (props) =>
-  (({ profile, education, experience, skills }) => {
-    return (
-      <div className="Resume">
-        <article className="content resume">
-          <Section className="profile" heading="Profile">
-            <p className="body">{profile}</p>
-          </Section>
-          <Section className="skills" heading="Skills">
-            <NoStyleUL>{skills.map(Skill)}</NoStyleUL>
-          </Section>
-          <Section className="experience" heading="Experience">
-            {experience.map(Job)}
-          </Section>
-          <Section className="education" heading="Education">
-            {education.map(Education)}
-          </Section>
-        </article>
-      </div>
-    );
-  })({ ...resume, ...props });
+export const Resume: React.StatelessComponent<IResume> = () => {
+  const { profile, education, experience, skills } = resume;
+  return (
+    <article className="Resume">
+      <Section className="profile" heading="Profile">
+        <p className="body">{profile}</p>
+      </Section>
+      <Section className="skills" heading="Skills">
+        <NoStyleUL>{skills.map(Skill)}</NoStyleUL>
+      </Section>
+      <Section className="experience" heading="Experience">
+        {experience.map(Job)}
+      </Section>
+      <Section className="education" heading="Education">
+        {education.map(Education)}
+      </Section>
+    </article>
+  );
+};
 
 export default Resume;

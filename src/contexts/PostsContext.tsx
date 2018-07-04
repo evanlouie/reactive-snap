@@ -1,9 +1,8 @@
-import fs from "fs";
+import fs from "fs-extra";
 import HighlightJS from "highlight.js";
 import marked from "marked";
 import path from "path";
 import React from "react";
-import { promisify } from "util";
 import { IPost } from "../types";
 
 interface IState {
@@ -18,10 +17,9 @@ export class PostsContext extends React.Component<IState, IState> {
   };
 
   private static get Context() {
-    if (!this.context) {
-      this.context = React.createContext<IState>(this.defaultState) as React.Context<IState>;
-    }
-    return this.context;
+    return this.context
+      ? this.context
+      : (this.context = React.createContext<IState>(this.defaultState));
   }
 
   public static get Consumer(): React.Consumer<IState> {
@@ -45,22 +43,24 @@ const convertMarkdownToHTML = async (markdown: string): Promise<string> =>
   });
 
 export const getWritePath = async (post: IPost): Promise<string> =>
-  ((fileDirectory = path.dirname(post.filepath)) => `${fileDirectory}/${post.title}`)();
+  `${path.dirname(post.filepath)}/${post.title}`;
 
-export const convertFileToPost = async (filepath: string): Promise<IPost> =>
-  ((
-    readFile = promisify(fs.readFile),
-    filename = path.basename(filepath),
-    // filedir = path.dirname(filepath),
-  ) =>
-    readFile(filepath, { encoding: "utf8" })
-      .then((content) => Promise.all([convertMarkdownToHTML(content)]))
-      .then(([html], date = filename.match(/(\d{4}-\d{2}-\d{2})-(.+)/i)) => ({
-        title: path.basename(filepath).match(/\.(md|markdown)$/i)
-          ? filename.replace("-", " ").split(".")[0]
-          : filename,
-        body: <div dangerouslySetInnerHTML={{ __html: html }} />,
-        postDate: date ? new Date(date[1]) : new Date(),
-        tags: [],
-        filepath,
-      })))();
+export const convertFileToPost = async (filepath: string): Promise<IPost> => {
+  const filename = path.basename(filepath);
+  const date = filename.match(/(\d{4}-\d{2}-\d{2})-(.+)/i);
+  const html = await fs.readFile(filepath, { encoding: "utf8" }).then(convertMarkdownToHTML);
+  return {
+    title: path.basename(filepath).match(/\.(md|markdown)$/i)
+      ? filename
+          .replace(/-/g, " ")
+          .split(".")[0]
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ")
+      : filename,
+    body: <div dangerouslySetInnerHTML={{ __html: html }} />,
+    postDate: date ? new Date(date[1]) : new Date(),
+    tags: [],
+    filepath,
+  };
+};

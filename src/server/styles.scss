@@ -1,41 +1,14 @@
 @import "_highlight";
 
-// code {
-//   font-family: "Fira Code", monospace;
-//   padding: 1px 5px;
-// }
-
-// Code blocks
-pre {
-  // font-size: small;
-  border: 1px solid #e8e8e8;
-  border-radius: 3px;
-  padding: 8px 12px;
-  overflow-x: scroll;
-
-  > code {
-    font-size: small;
-    font-family: "FiraCode", monospace !important;
-    border: 0;
-    padding-right: 0;
-    padding-left: 0;
-  }
-}
-
-/*
-Custom Site Styles
-*/
-
-// $grey-color: #828282;
-// $maxWidth: 900px;
-
-$font-serif: Georgia, serif;
-$font-sans: "Roboto", sans-serif;
-$font-mono: "VT323", monospace;
+$font-serif: "Times New Roman", Times, serif;
+$font-sans: "Helvetica Neue", Helvetica, "Raleway", "Roboto", sans-serif;
+$font-mono-inline: "VT323", monospace;
+$font-mono-block: "Fira Code", monospace;
 
 body {
   line-height: 1.4em;
   font-family: $font-serif;
+
   h1,
   h2,
   h3,
@@ -45,7 +18,24 @@ body {
     font-family: $font-sans;
     font-weight: normal;
   }
+
   code {
-    font-family: $font-mono;
+    font-family: $font-mono-inline;
+  }
+
+  pre {
+    font-size: small;
+    border: 1px solid #e8e8e8;
+    border-radius: 3px;
+    padding: 1em;
+    white-space: pre-wrap; // https://css-tricks.com/snippets/css/make-pre-text-wrap/
+
+    code {
+      font-size: small;
+      font-family: $font-mono-block;
+      border: 0;
+      padding-right: 0;
+      padding-left: 0;
+    }
   }
 }

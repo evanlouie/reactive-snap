@@ -5,38 +5,6 @@ import path from "path";
 import React from "react";
 import { IPost } from "../types";
 
-interface IState {
-  posts: IPost[];
-}
-
-export class PostsContext extends React.Component<IState, IState> {
-  private static context: React.Context<IState>;
-
-  private static readonly defaultState: IState = {
-    posts: [],
-  };
-
-  private static get Context() {
-    return this.context
-      ? this.context
-      : (this.context = React.createContext<IState>(this.defaultState));
-  }
-
-  public static get Consumer(): React.Consumer<IState> {
-    return this.Context.Consumer;
-  }
-
-  public state = {
-    ...PostsContext.defaultState,
-    ...this.props,
-  };
-
-  public render() {
-    const { Provider } = PostsContext.Context;
-    return <Provider value={this.state}>{this.props.children}</Provider>;
-  }
-}
-
 const convertMarkdownToHTML = async (markdown: string): Promise<string> =>
   marked.parse(markdown, {
     highlight: (code) => HighlightJS.highlightAuto(code).value,

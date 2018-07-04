@@ -56,8 +56,10 @@ const resume: IResume = {
       description:
         "Open Source Software Engineer, Azure Consultant, and Containerization Strategist",
       responsibilities: [
+        "Develop ML pipeline solutions on Kubernetes which can elastically scale training amongst thousands of nodes.",
+        "Develop data pipeline solutions with Spark to collate data from globally distributed IoT devices.",
         "Develop and maintain Microsoft open source projects.",
-        "Architect and develop custom solutions for Microsoft partners on Azure.",
+        "Architect and develop custom solutions with Microsoft partners on Azure.",
       ],
     },
     {

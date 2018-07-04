@@ -1,6 +1,6 @@
 import React, { StatelessComponent } from "react";
-import { PostsContext } from "../contexts/PostsContext";
-import { IPost } from "../types";
+import { BlogContext } from "../contexts/BlogContext";
+import { IPage, IPost } from "../types";
 
 const Post: StatelessComponent<IPost> = ({ title, postDate }) => (
   <article key={title}>
@@ -22,7 +22,7 @@ const PostGrid: StatelessComponent<{ posts: IPost[] }> = ({ posts }) => (
   </div>
 );
 
-const Home: StatelessComponent = () => (
+const Home: StatelessComponent<{ pages: IPage[]; posts: IPost[] }> = ({ posts }) => (
   <div className="Home">
     <header>
       <h1>Evan Louie</h1>
@@ -34,8 +34,8 @@ const Home: StatelessComponent = () => (
         </p>
       </details>
     </header>
-    <PostsContext.Consumer>{({ posts }) => <PostGrid posts={posts} />}</PostsContext.Consumer>
+    <PostGrid posts={posts} />
   </div>
 );
 
-export default Home;
+export default () => <BlogContext.Consumer>{(blog) => <Home {...blog} />}</BlogContext.Consumer>;

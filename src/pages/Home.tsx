@@ -38,4 +38,6 @@ const Home: StatelessComponent<{ pages: IPage[]; posts: IPost[] }> = ({ posts })
   </div>
 );
 
-export default () => <BlogContext.Consumer>{(blog) => <Home {...blog} />}</BlogContext.Consumer>;
+export default (() => (
+  <BlogContext.Consumer>{(blog) => <Home {...blog} />}</BlogContext.Consumer>
+)) as StatelessComponent;

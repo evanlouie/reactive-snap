@@ -11,8 +11,6 @@ import { compressCSS, compressJS, getCSS, normalizeCSS, turbolinks } from "./ser
 import { convertFileToPost } from "./server/Post";
 import { IPage, IPost } from "./types";
 
-const publicDirectory = path.join(__dirname, "..", "out");
-
 interface IAppState {
   links: { styles: string[]; scripts: string[] };
   pages: IPage[];
@@ -104,10 +102,11 @@ const writeOutFile = async (
   page: IPage,
   pages: IPage[],
   posts: IPost[],
+  outDir: string,
 ): Promise<string> => {
   const validFile = filepath.match(/^(.+)\.(tsx?|md)$/i);
   const writeOutDirectory = await (validFile
-    ? path.join(__dirname, "..", "out", path.relative(__dirname, validFile[1])).toLowerCase()
+    ? path.join(outDir, path.relative(__dirname, validFile[1])).toLowerCase()
     : Promise.reject(new Error(`${filepath} does not match legal regex`)));
   const [html, writePath, _] = await Promise.all([
     renderToStaticMarkup(
@@ -122,10 +121,8 @@ const writeOutFile = async (
   return writePath;
 };
 
-const getSiteFiles = async (
-  sitePath: string = path.join(__dirname),
-): Promise<Array<Promise<string>>> => {
-  const files = await promisify(glob)(`${sitePath}/**/*.{tsx,md}`);
+const getSiteFiles = async (siteDir: string, outDir: string): Promise<Array<Promise<string>>> => {
+  const files = await promisify(glob)(`${siteDir}/**/*.{tsx,md}`);
   const postsMap: { [filepath: string]: Promise<IPost> } = files
     .filter((filename) => !!path.basename(filename).match(/\.md$/i))
     .reduce((carry, filepath) => ({ ...carry, [filepath]: convertFileToPost(filepath) }), {});
@@ -162,18 +159,18 @@ const getSiteFiles = async (
     Promise.all([...Object.values(postsMap)]),
   ]);
   return Object.entries({ ...pagesMap, ...postsMap }).map(async ([filepath, content]) =>
-    writeOutFile(filepath, await content, pages, posts),
+    writeOutFile(filepath, await content, pages, posts, outDir),
   );
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 ////////////////////////////////////////////////////////////////////////////////
-(async () => {
-  await fs.remove(publicDirectory);
+(async (sitePath: string, outDir: string) => {
+  await fs.remove(outDir);
   const startTime = Date.now();
   console.info("Regenerating Site...");
-  const fileWrites = await getSiteFiles();
+  const fileWrites = await getSiteFiles(sitePath, outDir);
   const files = await Promise.all(
     fileWrites.map((write) =>
       write.then((filepath) => {
@@ -183,4 +180,4 @@ const getSiteFiles = async (
   );
   console.table(files);
   console.info(`Site regenerated in: ${Date.now() - startTime}ms`);
-})().catch(console.error);
+})(path.join(__dirname), path.join(__dirname, "..", "out")).catch(console.error);

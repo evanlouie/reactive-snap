@@ -359,7 +359,7 @@ const Education: StatelessComponent<IEducation> = ({ school, degree, website, co
   </div>
 );
 
-export const Resume: React.StatelessComponent<IResume> = ({
+const Resume: React.StatelessComponent<IResume> = ({
   profile,
   education,
   experience,

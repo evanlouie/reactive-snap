@@ -6,7 +6,7 @@ $font-mono-inline: "VT323", monospace;
 $font-mono-block: "Fira Code", monospace;
 
 body {
-  line-height: 1.4em;
+  line-height: 1.4;
   font-family: $font-serif;
 
   h1,
@@ -15,8 +15,9 @@ body {
   h4,
   h5,
   h6 {
+    line-height: 1;
     font-family: $font-sans;
-    font-weight: normal;
+    // font-weight: normal;
   }
 
   code {

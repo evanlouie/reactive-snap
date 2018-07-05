@@ -2,10 +2,26 @@ import React, { StatelessComponent } from "react";
 import { BlogContext } from "../contexts/BlogContext";
 import { IPage, IPost } from "../types";
 
-const Post: StatelessComponent<IPost> = ({ title, postDate }) => (
-  <article key={title}>
-    <h2>{title}</h2>
-    <time dateTime={postDate.toISOString()}>{postDate.toDateString()}</time>
+const Post: StatelessComponent<IPost> = ({ title, postDate, excerpt, url }) => (
+  <article
+    key={title}
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      borderBottom: "1px solid lightgrey",
+      paddingBottom: "1em",
+    }}
+  >
+    <h2>
+      <a href={"/" + url} style={{ textDecoration: "none" }}>
+        {title}
+      </a>
+    </h2>
+    <p>{excerpt}</p>
+    <time dateTime={postDate.toISOString()} style={{ color: "slategrey" }}>
+      {postDate.toDateString()}
+    </time>
   </article>
 );
 

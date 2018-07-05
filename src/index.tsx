@@ -8,6 +8,7 @@ import { Post } from "./components/Post";
 import { BlogContext } from "./contexts/BlogContext";
 import { DefaultLayout } from "./layouts/DefaultLayout";
 import { compressCSS, compressJS, getCSS, normalizeCSS, turbolinks } from "./server/File";
+import { convertFileToPage } from "./server/Page";
 import { convertFileToPost } from "./server/Post";
 import { IPage, IPost } from "./types";
 
@@ -127,7 +128,7 @@ const writeOutFile = async (
 ): Promise<string> => {
   const validFile = filepath.match(/^(.+)\.(tsx?|md)$/i);
   const writeOutDirectory = await (validFile
-    ? path.join(outDir, path.relative(__dirname, validFile[1])).toLowerCase()
+    ? path.join(outDir, page.url).toLowerCase()
     : Promise.reject(new Error(`${filepath} does not match legal regex`)));
   const [html, writePath, _] = await Promise.all([
     renderToStaticMarkup(
@@ -144,41 +145,28 @@ const writeOutFile = async (
 
 const getSiteFiles = async (siteDir: string, outDir: string): Promise<Array<Promise<string>>> => {
   const files = await promisify(glob)(`${siteDir}/**/*.{tsx,md}`);
+  const postsReducer = (carry: { [filepath: string]: Promise<IPost> }, filepath: string) => ({
+    ...carry,
+    [filepath]: convertFileToPost(filepath),
+  });
+  const pagesReducer = (carry: { [filepath: string]: Promise<IPage> }, filepath: string) =>
+    typeof require(filepath).default === "function"
+      ? { ...carry, [filepath]: convertFileToPage(filepath) }
+      : carry;
+  const validPostFilepath = (filepath: string) =>
+    !!path.basename(filepath).match(/\.(md|markdown)$/i);
+  const validPageFilepath = (filepath: string) => !!path.basename(filepath).match(/\.tsx?$/i);
   const postsMap: { [filepath: string]: Promise<IPost> } = files
-    .filter((filename) => !!path.basename(filename).match(/\.md$/i))
-    .reduce((carry, filepath) => ({ ...carry, [filepath]: convertFileToPost(filepath) }), {});
+    .filter(validPostFilepath)
+    .reduce(postsReducer, {});
   const pagesMap: { [filepath: string]: Promise<IPage> } = files
-    .filter((filename) => !!path.basename(filename).match(/\.tsx?$/i))
-    .reduce((carry, filepath) => {
-      const DefaultExport = require(filepath).default;
-      const basename = path.basename(filepath);
-      const titleMatch = basename.match(/^(.+)\.tsx?$/i);
-      const title = titleMatch
-        ? titleMatch[1]
-            .split(/(?=[A-Z])/)
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ")
-        : basename;
-      return typeof DefaultExport === "function"
-        ? {
-            ...carry,
-            [filepath]: Promise.resolve<IPage>({
-              title,
-              body: (
-                <div className="Page">
-                  <DefaultExport />
-                </div>
-              ),
-              tags: [],
-              filepath,
-            }),
-          }
-        : carry;
-    }, {});
+    .filter(validPageFilepath)
+    .reduce(pagesReducer, {});
   const [pages, posts]: [IPage[], IPost[]] = await Promise.all([
     Promise.all([...Object.values(pagesMap)]),
     Promise.all([...Object.values(postsMap)]),
   ]);
+
   return Object.entries({ ...pagesMap, ...postsMap }).map(async ([filepath, content]) =>
     writeOutFile(filepath, await content, pages, posts, outDir),
   );

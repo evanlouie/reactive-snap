@@ -5,10 +5,12 @@ export interface IPage {
   body: React.ReactNode;
   tags: string[];
   filepath: string;
+  url: string;
 }
 
 export interface IPost extends IPage {
   postDate: Date;
+  excerpt: string;
 }
 
 export interface ILayout {

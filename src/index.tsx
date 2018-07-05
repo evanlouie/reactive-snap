@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import glob from "glob";
 import path from "path";
-import React from "react";
+import React, { StatelessComponent } from "react";
 import ReactDOMServer from "react-dom/server";
 import { promisify } from "util";
 import { Post } from "./components/Post";
@@ -13,78 +13,99 @@ import { IPage, IPost } from "./types";
 
 interface IAppState {
   links: { styles: string[]; scripts: string[] };
+  meta: Array<React.DetailedHTMLProps<React.MetaHTMLAttributes<HTMLMetaElement>, HTMLMetaElement>>;
   pages: IPage[];
   posts: IPost[];
   scripts: string[];
   styles: string[];
   title: string;
-  description?: string;
 }
 const App: React.StatelessComponent<IAppState> = ({
   children,
   links,
+  meta,
   pages,
   posts,
   scripts,
   styles,
   title,
-  description,
-}) => (
-  <html lang="en">
-    <head>
-      <title>{title ? title : "Evan Louie"}</title>
-      <meta charSet="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <meta name="Description" content={description || "Evan Louie Website & Blog"} />
-      {links.styles.map((href) => <link key={href} rel="stylesheet" href={encodeURI(href)} />)}
-      {styles.map((style) => <style key={style} dangerouslySetInnerHTML={{ __html: style }} />)}
-      {scripts.map((script) => (
-        <script key={script} dangerouslySetInnerHTML={{ __html: script }} />
-      ))}
-    </head>
-    <body>
-      <BlogContext pages={pages} posts={posts}>
-        <BlogContext.Consumer>
-          {(blog) => (
-            <DefaultLayout pages={blog.pages} posts={blog.posts}>
-              {children}
-            </DefaultLayout>
-          )}
-        </BlogContext.Consumer>
-      </BlogContext>
-    </body>
-  </html>
-);
+}) => {
+  const Meta: StatelessComponent<
+    React.DetailedHTMLProps<React.MetaHTMLAttributes<HTMLMetaElement>, HTMLMetaElement>
+  > = (props) => (
+    <meta
+      key={Object.entries(props)
+        .map(([key, value]) => key + value)
+        .join("")}
+      {...props}
+    />
+  );
+  const Script: StatelessComponent<string> = (script) => (
+    <script key={script} dangerouslySetInnerHTML={{ __html: script }} />
+  );
+  const Style: StatelessComponent<string> = (style) => (
+    <style key={style} dangerouslySetInnerHTML={{ __html: style }} />
+  );
+
+  return (
+    <html lang="en">
+      <head>
+        <title>{title}</title>
+        {meta.map(Meta)}
+        {links.styles.map((href) => <link key={href} rel="stylesheet" href={encodeURI(href)} />)}
+        {styles.map(Style)}
+        {scripts.map(Script)}
+      </head>
+      <body>
+        <BlogContext pages={pages} posts={posts}>
+          <BlogContext.Consumer>
+            {(blog) => (
+              <DefaultLayout pages={blog.pages} posts={blog.posts}>
+                {children}
+              </DefaultLayout>
+            )}
+          </BlogContext.Consumer>
+        </BlogContext>
+      </body>
+    </html>
+  );
+};
 
 const renderToStaticMarkup = async (
   content: IPage | IPost,
   pages: IPage[],
   posts: IPost[],
 ): Promise<string> => {
-  const [scripts, styles, links] = await Promise.all([
+  const [scripts, styles] = await Promise.all([
     Promise.all([turbolinks()]).then((uncompressed) => Promise.all(uncompressed.map(compressJS))),
     Promise.all([normalizeCSS(), getCSS()]).then((uncompressed) =>
       Promise.all(uncompressed.map(compressCSS)),
     ),
-    {
+  ]);
+
+  const appState: IAppState = {
+    posts,
+    pages,
+    title: content.title,
+    styles,
+    scripts,
+    links: {
       styles: [
         "https://fonts.googleapis.com/css?family=Roboto|Raleway|VT323",
         "https://cdn.rawgit.com/tonsky/FiraCode/1.205/distr/fira_code.css",
       ],
       scripts: [],
     },
-  ]);
+    meta: [
+      { charSet: "utf8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "Descriptions", content: "Evan Louie Website & Blog" },
+    ],
+  };
   return (
     "<!DOCTYPE html>" +
     ReactDOMServer.renderToStaticMarkup(
-      <App
-        posts={posts}
-        pages={pages}
-        title={content.title}
-        styles={styles}
-        scripts={scripts}
-        links={links}
-      >
+      <App {...appState}>
         {content.filepath.match(/\.md$/i) ? (
           <Post {...content as IPost} />
         ) : content.filepath.match(/\.tsx?$/i) ? (

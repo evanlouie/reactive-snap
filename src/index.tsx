@@ -4,6 +4,7 @@ import path from "path";
 import React, { StatelessComponent } from "react";
 import ReactDOMServer from "react-dom/server";
 import { promisify } from "util";
+import { Page } from "./components/Page";
 import { Post } from "./components/Post";
 import { BlogContext } from "./contexts/BlogContext";
 import { DefaultLayout } from "./layouts/DefaultLayout";
@@ -110,9 +111,9 @@ const renderToStaticMarkup = async (
         {content.filepath.match(/\.md$/i) ? (
           <Post {...content as IPost} />
         ) : content.filepath.match(/\.tsx?$/i) ? (
-          <div className="Body__content">{content.body}</div>
+          <Page {...content} />
         ) : (
-          <div className="Body__content">Page format not supported</div>
+          <div className="error">Page format not supported</div>
         )}
       </App>,
     )

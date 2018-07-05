@@ -57,3 +57,38 @@ body {
     }
   }
 }
+
+.Home {
+  h1 {
+    font-family: $font-mono-inline;
+    font-size: 4em;
+    margin: 0;
+  }
+
+  .PostGrid {
+    display: grid;
+    grid-template: auto / repeat(auto-fill, minmax(20em, 1fr));
+    gap: 1em;
+    article {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-bottom: 1px solid $light-grey;
+      padding: 1em 0;
+      h2 {
+        margin: 0;
+        a {
+          text-decoration: none;
+        }
+      }
+      p {
+        font-family: $font-sans;
+        font-weight: 300;
+        line-height: 1.5;
+      }
+      time {
+        color: $grey;
+      }
+    }
+  }
+}

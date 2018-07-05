@@ -3,39 +3,17 @@ import { BlogContext } from "../contexts/BlogContext";
 import { IPage, IPost } from "../types";
 
 const Post: StatelessComponent<IPost> = ({ title, postDate, excerpt, url }) => (
-  <article
-    key={title}
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between",
-      borderBottom: "1px solid lightgrey",
-      paddingBottom: "1em",
-    }}
-  >
+  <article className="Post" key={title}>
     <h2>
-      <a href={"/" + url} style={{ textDecoration: "none" }}>
-        {title}
-      </a>
+      <a href={"/" + url}>{title}</a>
     </h2>
     <p>{excerpt}</p>
-    <time dateTime={postDate.toISOString()} style={{ color: "slategrey" }}>
-      {postDate.toDateString()}
-    </time>
+    <time dateTime={postDate.toISOString()}>{postDate.toDateString()}</time>
   </article>
 );
 
 const PostGrid: StatelessComponent<{ posts: IPost[] }> = ({ posts }) => (
-  <div
-    className="PostGrid"
-    style={{
-      display: "grid",
-      gridTemplate: "auto / repeat(auto-fill, minmax(20em, 1fr))",
-      gap: "1em",
-    }}
-  >
-    {posts.map(Post)}
-  </div>
+  <div className="PostGrid">{posts.map(Post)}</div>
 );
 
 const Home: StatelessComponent<{ pages: IPage[]; posts: IPost[] }> = ({ posts }) => (

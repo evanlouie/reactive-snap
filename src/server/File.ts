@@ -49,7 +49,8 @@ export const minify = async (html: string): Promise<string> =>
 export const getCSS = async (includePaths = [__dirname]): Promise<string> => {
   const scss = await fs.readFile(path.join(__dirname, "styles.scss"), { encoding: "utf8" });
   const result = await promisify(sass.render)({ data: scss, includePaths });
-  return result.css.toString();
+  const css = result.css.toString();
+  return css;
 };
 
 const _compressCSS = async (css: string) =>

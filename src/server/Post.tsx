@@ -70,7 +70,12 @@ export const convertFileToPost = async (filepath: string): Promise<IPost> => {
     .join(" ")
     .split(" ")
     .slice(0, 50)
-    .join(" ");
+    .join(" ")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">");
 
   return {
     title,

@@ -244,7 +244,7 @@ const Section: StatelessComponent<{ heading: string; className: string }> = ({
 );
 
 const NoStyleUL: StatelessComponent = ({ children }) => (
-  <ul className="NoStyleUL" style={{ listStyle: "none", paddingLeft: "0.25em", margin: "0" }}>
+  <ul className="NoStyleUL" style={{ listStyle: "none", paddingLeft: 0, margin: 0 }}>
     {children}
   </ul>
 );

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Language Performance Tests - Nth Fibonacci
-tags: ruby php node crystal go performance fibonacci functional recursion
+tags: [ ruby, php, node, crystal, go, performance, fibonacci, functional, recursion ]
 excerpt: 'One of the most common interview questions also happens to be a good measure of performance for differing languages. With a whole bunch of different ways to implement it, calculating the nth Fibonacci number can both reveal strengths/weaknesses of languages as optimizations become easier or more difficult (possibly impossible) to implement.'
 ---
 
@@ -16,28 +16,28 @@ With a whole bunch of different ways to implement it, calculating the nth Fibona
 ---
 
 ```
-Language         | Style              | Time
----------------- | ------------------ | ---------------------
-Ruby (2.3.1p112) | Recursive          | 12.163913
-                 | Recursive/Memoized | 00.000063
-                 | Tail Recursive     | 00.000014
-                 | Iterative          | 00.000015
-PHP (5.6)        | Recursive          | 82.052486181259
-                 | Recursive/Memoized | 00.00017690658569336
-                 | Tail Recursive     | 00.000020027160644531
-                 | Iterative          | 00.000016927719116211
-Node (6.7.0)     | Recursive          | 00.976164
-                 | Recursive/Memoized | 00.000408
-                 | Tail Recursive     | 00.000221
-                 | Iterative          | 00.000162
-Crystal (0.19.3) | Recursive          | 20.0241730
-                 | Recursive/Memoized | 00.0000270
-                 | Tail Recursive     | 00.0000140
-                 | Iterative          | 00.0000120
-Go (1.7.1)       | Recursive          | 81.471789461
-                 | Recursive/Memoized | 00.00002876
-                 | Tail Recursive     | 00.000007418
-                 | Iterative          | 00.000007196
+| Language           | Style                 | Time            |
+| ------------------ | --------------------- | --------------- |
+| Ruby (2.3.1p112)   | Recursive             | 12.163913       |
+| Recursive/Memoized | 00.000063             |
+| Tail Recursive     | 00.000014             |
+| Iterative          | 00.000015             |
+| PHP (5.6)          | Recursive             | 82.052486181259 |
+| Recursive/Memoized | 00.00017690658569336  |
+| Tail Recursive     | 00.000020027160644531 |
+| Iterative          | 00.000016927719116211 |
+| Node (6.7.0)       | Recursive             | 00.976164       |
+| Recursive/Memoized | 00.000408             |
+| Tail Recursive     | 00.000221             |
+| Iterative          | 00.000162             |
+| Crystal (0.19.3)   | Recursive             | 20.0241730      |
+| Recursive/Memoized | 00.0000270            |
+| Tail Recursive     | 00.0000140            |
+| Iterative          | 00.0000120            |
+| Go (1.7.1)         | Recursive             | 81.471789461    |
+| Recursive/Memoized | 00.00002876           |
+| Tail Recursive     | 00.000007418          |
+| Iterative          | 00.000007196          |
 ```
 
 # Calculating the 1000th Fibonacci Number
@@ -45,23 +45,23 @@ Go (1.7.1)       | Recursive          | 81.471789461
 ---
 
 ```
-Language         | Style          | Time
----------------- | -------------- | -------------------
-Ruby (2.3.1p112) | Memoized       | 0.001242
-                 | Tail Recursive | 0.000675
-                 | Iterative      | 0.000603
-PHP (5.6)        | Recursive      | 0.028115034103394
-                 | Tail Recursive | 0.00032591819763184
-                 | Iterative      | 0.00013184547424316
-Node (6.7.0)     | Memoized       | 0.006424
-                 | Tail Recursive | 0.000249
-                 | Iterative      | 0.000187
-Crystal (0.19.3) | Memoized       | 0.0028400
-                 | Tail Recursive | 0.0003290
-                 | Iterative      | 0.0001250
-Go (1.7.1)       | Memoized       | 0.000830915
-                 | Tail Recursive | 0.000302451
-                 | Iterative      | 0.000243935
+| Language         | Style               | Time              |
+| ---------------- | ------------------- | ----------------- |
+| Ruby (2.3.1p112) | Memoized            | 0.001242          |
+| Tail Recursive   | 0.000675            |
+| Iterative        | 0.000603            |
+| PHP (5.6)        | Recursive           | 0.028115034103394 |
+| Tail Recursive   | 0.00032591819763184 |
+| Iterative        | 0.00013184547424316 |
+| Node (6.7.0)     | Memoized            | 0.006424          |
+| Tail Recursive   | 0.000249            |
+| Iterative        | 0.000187            |
+| Crystal (0.19.3) | Memoized            | 0.0028400         |
+| Tail Recursive   | 0.0003290           |
+| Iterative        | 0.0001250           |
+| Go (1.7.1)       | Memoized            | 0.000830915       |
+| Tail Recursive   | 0.000302451         |
+| Iterative        | 0.000243935         |
 ```
 
 # Calculating the 10000th Fibonacci Number
@@ -69,23 +69,23 @@ Go (1.7.1)       | Memoized       | 0.000830915
 ---
 
 ```
-Language         | Style          | Time
----------------- | -------------- | ------------------
-Ruby (2.3.1p112) | Memoized       | Stack Overflow
-                 | Tail Recursive | Stack Overflow
-                 | Iterative      | 0.007262
-PHP (5.6)        | Recursive      | 2.5333361625671
-                 | Tail Recursive | 0.0018389225006104
-                 | Iterative      | 0.0046770572662354
-Node (6.7.0)     | Memoized       | 0.009359
-                 | Tail Recursive | 0.000904
-                 | Iterative      | 0.000447
-Crystal (0.19.3) | Memoized       | 0.0167490
-                 | Tail Recursive | 0.0059720
-                 | Iterative      | 0.0035250
-Go (1.7.1)       | Memoized       | 0.011767574
-                 | Tail Recursive | 0.006467878
-                 | Iterative      | 0.004209375
+| Language         | Style              | Time            |
+| ---------------- | ------------------ | --------------- |
+| Ruby (2.3.1p112) | Memoized           | Stack Overflow  |
+| Tail Recursive   | Stack Overflow     |
+| Iterative        | 0.007262           |
+| PHP (5.6)        | Recursive          | 2.5333361625671 |
+| Tail Recursive   | 0.0018389225006104 |
+| Iterative        | 0.0046770572662354 |
+| Node (6.7.0)     | Memoized           | 0.009359        |
+| Tail Recursive   | 0.000904           |
+| Iterative        | 0.000447           |
+| Crystal (0.19.3) | Memoized           | 0.0167490       |
+| Tail Recursive   | 0.0059720          |
+| Iterative        | 0.0035250          |
+| Go (1.7.1)       | Memoized           | 0.011767574     |
+| Tail Recursive   | 0.006467878        |
+| Iterative        | 0.004209375        |
 ```
 
 # Takeaways

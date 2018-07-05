@@ -2,6 +2,7 @@
 layout: post
 title: Development Environment With Kubernetes
 date: 2018-03-22 16:12 -0700
+tags: [kubernetes]
 ---
 
 Currently Work in progress; A basic `deployment` to expose MySQL, PostgreSQL, and Redis to your cluster

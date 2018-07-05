@@ -52,22 +52,23 @@ export const getCSS = async (includePaths = [__dirname]): Promise<string> => {
   return result.css.toString();
 };
 
+const _compressCSS = async (css: string) =>
+  promisify(sass.render)({ data: css, outputStyle: "compressed" }).then((result) =>
+    result.css.toString(),
+  );
+
 /**
  * Compress a CSS string and cache the response
  * @param css string to compress
  */
 export const compressCSS = async (css: string): Promise<string> =>
-  cssCache[css]
-    ? cssCache[css]
-    : promisify(sass.render)({ data: css, outputStyle: "compressed" })
-        .then((result) => result.css.toString())
-        .then((style) => (cssCache[css] = style));
+  cssCache[css] ? cssCache[css] : _compressCSS(css).then((style) => (cssCache[css] = style));
+
+const _compressJS = async (js: string) => Promise.all([uglifyJS.minify(js).code]);
 
 /**
  * Compress a string of JS and cache the response
  * @param js JS string to compress
  */
 export const compressJS = async (js: string): Promise<string> =>
-  jsCache[js]
-    ? jsCache[js]
-    : Promise.all([uglifyJS.minify(js).code]).then(([minified]) => (jsCache[js] = minified));
+  jsCache[js] ? jsCache[js] : _compressJS(js).then(([minified]) => (jsCache[js] = minified));

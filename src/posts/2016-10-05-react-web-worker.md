@@ -1,13 +1,13 @@
 ---
 layout: post
 title: 'React & Web Workers'
-tags: react web-workers node javascript browser multi-thread multi-process
+tags: [ react, web-workers, node, javascript, browser, multi-thread, multi-process ]
 excerpt: 'One of the less well known or used features of modern browsers is Web Worker support. With it, you can use spin up isolated processes to do CPU intensive tasks without locking the windows main rendering thread.'
 ---
 
 One of the less well known or used features of modern browsers is Web Worker support. With it, you can spin up isolated processes to do CPU intensive tasks without locking the windows main rendering thread.
 
-# The Problem
+## The Problem
 
 Want an example? Just try to run this code in your browsers console... Its my solution to [Problem 5](https://github.com/evanlouie/project-euler/blob/master/src/lib/EulerProblem5.ts) of [Project Euler](https://projecteuler.net/problem=5)
 
@@ -30,7 +30,7 @@ Want an example? Just try to run this code in your browsers console... Its my so
 
 Feel that lag? Feel your browser lock up? Yup, thats because the your browser window runs in a single threaded event loop. This event loop is why Node.js and Javascript in general is considered "fast". But you must not forget that its only "fast" for IO bound applications. Anything CPU bound/intensive will not yield itself to any other task and will thus act sequentially in the event loop; and for a browser window, where rendering occurs in the main thread, means a lock.
 
-# The Solution
+## The Solution
 
 Now, go to <https://www.evanlouie.com/project-euler/> and click the "Answer" button for problem 5.
 

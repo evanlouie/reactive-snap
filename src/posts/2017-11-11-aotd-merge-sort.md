@@ -2,7 +2,7 @@
 layout: post
 title: 'AOTD: (External) Merge Sort'
 categories: algorithms
-tags: algorithms distributed parallel coffeescript
+tags: [ algorithms, distributed, parallel, typescript ]
 ---
 
 Hard to explain my love for MergeSort. It's easily one of my favourite algorithms for its simplicity and recursive nature; being the closest to a literal "divide & conquer" algorithm you could possibly get to.

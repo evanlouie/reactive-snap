@@ -30,6 +30,10 @@ const getFile = async (pathname: string): Promise<string> =>
 ////////////////////////////////////////////////////////////////////////////////
 export const turbolinks = () => getFile(require.resolve("turbolinks"));
 export const normalizeCSS = () => getFile(require.resolve("normalize.css"));
+// export const react = () => getFile(require.resolve("react/umd/react.development.js"));
+export const react = () => getFile(require.resolve("react/umd/react.production.min.js"));
+// export const reactDom = () => getFile(require.resolve("react-dom/umd/react-dom.development.js"));
+export const reactDom = () => getFile(require.resolve("react-dom/umd/react-dom.production.min.js"));
 
 /**
  * All in one minifier for full html

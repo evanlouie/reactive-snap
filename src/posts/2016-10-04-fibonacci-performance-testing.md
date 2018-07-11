@@ -11,9 +11,7 @@ One of the most common interview questions also happens to be a good measure of 
 
 With a whole bunch of different ways to implement it, calculating the nth Fibonacci number can both reveal strengths/weaknesses of languages as optimizations become easier or more difficult (possibly impossible) to implement.
 
-# Calculating the 42nd Fibonacci Number
-
----
+## Calculating the 42nd Fibonacci Number
 
 ```
 | Language           | Style                 | Time            |
@@ -40,9 +38,7 @@ With a whole bunch of different ways to implement it, calculating the nth Fibona
 | Iterative          | 00.000007196          |
 ```
 
-# Calculating the 1000th Fibonacci Number
-
----
+## Calculating the 1000th Fibonacci Number
 
 ```
 | Language         | Style               | Time              |
@@ -64,9 +60,7 @@ With a whole bunch of different ways to implement it, calculating the nth Fibona
 | Iterative        | 0.000243935         |
 ```
 
-# Calculating the 10000th Fibonacci Number
-
----
+## Calculating the 10000th Fibonacci Number
 
 ```
 | Language         | Style              | Time            |
@@ -88,11 +82,9 @@ With a whole bunch of different ways to implement it, calculating the nth Fibona
 | Iterative        | 0.004209375        |
 ```
 
-# Takeaways
+## Takeaways
 
 I was extremely surprised by the findings of this basic test. I expected Ruby to be the slowest by a large margin with Go and Crystal being magnitudes faster and Node falling behind them:
-
----
 
 - Ruby handles big numbers VERY well. Although getting a stack overflow with `n > 10000`, I'm sure that one could increase it's stack size to make the memoized and tail-recursive solutions work just as well. Was able to return the 10000th fib without any BigNum implementation.
 - PHP held up as I expected. Solid performance for a dynamic language, however it should be noted that I did not implement the solution with GMPMP or BCMath. Only with PHP's standard numbers. So with the 10000th test, `infinity` was returned. I am curious to see how PHP7 compares.
@@ -104,9 +96,7 @@ What I was not expecting was the implementation of BigInt in Crystal and Go to b
 
 I was amazed at the performance optimizations Ruby has done in terms of autoscaling its number type. Without actually doing any explicit typing, Ruby's number type management is optimized enough to stay competitive with Crystal and to Go in the basic case.
 
-# Caveats
-
----
+## Caveats
 
 - This is an EXTREMELY dumb performance test. Meaning that I only really wanted to see how the languages would perform when I tried to transfer the same code from language to language without any sort of optimizations. Because of this, I default to the BigInt type for Go and Crystal.
 - A test using variadic functions to optimize between Int32/Int64/BigInt would most definitely make Go and Crystal leagues faster. I also wouldn't be surprised if this performance measure changed drastically as Go and Crystal optimize there BigInt implementations.

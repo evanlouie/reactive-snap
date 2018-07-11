@@ -6,6 +6,7 @@ $font-mono-inline: "VT323", monospace;
 $font-mono-block: "Fira Code", monospace;
 
 $light-grey: #e8e8e8;
+$lightish-grey: #999999;
 $grey: #828282;
 $black: #333333;
 
@@ -58,8 +59,49 @@ body {
   }
 }
 
+.DefaultLayout {
+  // $logo-width: 3em;
+  // margin: auto;
+  // padding: 1em;
+  // max-width: 960px;
+  // display: grid;
+  // grid-template:
+  //   "header menu menu" auto
+  //   "body body body" auto
+  //   "footer footer footer" auto / $logo-width auto auto;
+  // row-gap: 1em;
+
+  // &__header {
+  //   grid-area: header;
+  // }
+
+  // .logo {
+  //   display: inline-block;
+  //   width: $logo-width;
+  // }
+
+  .top-nav {
+    display: grid;
+    grid-template: auto / repeat(auto-fill, 10em);
+    align-items: center;
+    justify-items: center;
+
+    &__link {
+      color: $grey;
+      font-family: $font-sans;
+      font-weight: 300;
+      font-size: larger;
+      text-decoration: none;
+
+      &:hover {
+        color: $black;
+      }
+    }
+  }
+}
+
 .Home {
-  h1 {
+  &__header {
     font-family: $font-mono-inline;
     font-size: 4em;
     margin: 0;
@@ -69,26 +111,80 @@ body {
     display: grid;
     grid-template: auto / repeat(auto-fill, minmax(20em, 1fr));
     gap: 1em;
-    article {
+  }
+
+  .Post {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-bottom: 1px solid $light-grey;
+    padding: 1em 0;
+
+    &__heading {
+      margin: 0;
+    }
+    &__link {
+      text-decoration: none;
+    }
+
+    &__excerpt {
+      font-family: $font-sans;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    &__time {
+      color: $grey;
+    }
+  }
+}
+
+.Resume {
+  .InlineIcon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin: auto 0.5em;
+    vertical-align: middle;
+  }
+
+  .Section {
+    border-top: 1px solid $light-grey;
+    margin-top: 1em;
+  }
+
+  .NoStyleUL {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .Job {
+    margin-top: 1em;
+
+    &__placement {
+      // display: grid;
+      // grid-template-columns: max-content max-content;
+      // justify-content: space-between;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      flex-wrap: wrap;
       justify-content: space-between;
-      border-bottom: 1px solid $light-grey;
-      padding: 1em 0;
-      h2 {
-        margin: 0;
-        a {
-          text-decoration: none;
-        }
-      }
-      p {
-        font-family: $font-sans;
-        font-weight: 300;
-        line-height: 1.5;
-      }
-      time {
-        color: $grey;
-      }
+    }
+  }
+
+  .Education {
+    display: flex;
+    flex-direction: column;
+
+    &__convocation {
+      // display: grid;
+      // grid-template-columns: max-content max-content;
+      // justify-content: space-between;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
     }
   }
 }

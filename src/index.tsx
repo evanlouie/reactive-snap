@@ -1,25 +1,45 @@
 import fs from "fs-extra";
 import glob from "glob";
 import path from "path";
-import React, { StatelessComponent } from "react";
+import React, { createFactory, StatelessComponent } from "react";
 import ReactDOMServer from "react-dom/server";
 import { promisify } from "util";
 import { Page } from "./components/Page";
 import { Post } from "./components/Post";
 import { BlogContext } from "./contexts/BlogContext";
 import { DefaultLayout } from "./layouts/DefaultLayout";
-import { compressCSS, compressJS, getCSS, normalizeCSS, turbolinks } from "./server/File";
+import {
+  compressCSS,
+  compressJS,
+  getCSS,
+  normalizeCSS,
+  react,
+  reactDom,
+  turbolinks,
+} from "./server/File";
 import { convertFileToPage } from "./server/Page";
 import { convertFileToPost } from "./server/Post";
 import { IPage, IPost } from "./types";
+
+interface IScript
+  extends React.DetailedHTMLProps<
+      React.ScriptHTMLAttributes<HTMLScriptElement>,
+      HTMLScriptElement
+    > {
+  script: string;
+}
+interface IStyle
+  extends React.DetailedHTMLProps<React.StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement> {
+  css: string;
+}
 
 interface IAppState {
   links: { styles: string[]; scripts: string[] };
   meta: Array<React.DetailedHTMLProps<React.MetaHTMLAttributes<HTMLMetaElement>, HTMLMetaElement>>;
   pages: IPage[];
   posts: IPost[];
-  scripts: string[];
-  styles: string[];
+  scripts: IScript[];
+  styles: IStyle[];
   title: string;
 }
 const App: React.StatelessComponent<IAppState> = ({
@@ -42,11 +62,11 @@ const App: React.StatelessComponent<IAppState> = ({
       {...props}
     />
   );
-  const Script: StatelessComponent<string> = (script) => (
-    <script key={script} dangerouslySetInnerHTML={{ __html: script }} />
+  const Script: StatelessComponent<IScript> = ({ script, ...props }) => (
+    <script key={script} dangerouslySetInnerHTML={{ __html: script }} {...props} />
   );
-  const Style: StatelessComponent<string> = (style) => (
-    <style key={style} dangerouslySetInnerHTML={{ __html: style }} />
+  const Style: StatelessComponent<IStyle> = ({ css, ...props }) => (
+    <style key={css} dangerouslySetInnerHTML={{ __html: css }} {...props} />
   );
 
   return (
@@ -78,11 +98,13 @@ const renderToStaticMarkup = async (
   pages: IPage[],
   posts: IPost[],
 ): Promise<string> => {
-  const [scripts, styles] = await Promise.all([
-    Promise.all([turbolinks()]).then((uncompressed) => Promise.all(uncompressed.map(compressJS))),
-    Promise.all([normalizeCSS(), getCSS()]).then((uncompressed) =>
-      Promise.all(uncompressed.map(compressCSS)),
-    ),
+  const [scripts, styles]: [IScript[], IStyle[]] = await Promise.all([
+    Promise.all([turbolinks(), react(), reactDom()])
+      .then((uncompressed) => Promise.all(uncompressed.map(compressJS)))
+      .then((compressed) => compressed.map((script) => ({ script }))),
+    Promise.all([normalizeCSS(), getCSS()])
+      .then((uncompressed) => Promise.all(uncompressed.map(compressCSS)))
+      .then((compressed) => compressed.map((css) => ({ css }))),
   ]);
 
   const appState: IAppState = {
@@ -104,6 +126,7 @@ const renderToStaticMarkup = async (
       { name: "Descriptions", content: "Evan Louie Website & Blog" },
     ],
   };
+
   return (
     "<!DOCTYPE html>" +
     ReactDOMServer.renderToStaticMarkup(
@@ -144,7 +167,7 @@ const writeOutFile = async (
   return writePath;
 };
 
-const getSiteFiles = async (siteDir: string, outDir: string): Promise<Array<Promise<string>>> => {
+const getSiteFiles = async (siteDir: string, outDir: string) => {
   const files = await promisify(glob)(`${siteDir}/**/*.{tsx,md}`);
   const postsReducer = (carry: { [filepath: string]: Promise<IPost> }, filepath: string) => ({
     ...carry,
@@ -168,9 +191,19 @@ const getSiteFiles = async (siteDir: string, outDir: string): Promise<Array<Prom
     Promise.all([...Object.values(postsMap)]),
   ]);
 
-  return Object.entries({ ...pagesMap, ...postsMap }).map(async ([filepath, content]) =>
-    writeOutFile(filepath, await content, pages, posts, outDir),
+  const writes = Object.entries({ ...pagesMap, ...postsMap }).reduce<{
+    [filepath: string]: Promise<string>;
+  }>(
+    (carry, [filepath, content]) => ({
+      ...carry,
+      [filepath]: (content as Promise<IPage>).then((html) =>
+        writeOutFile(filepath, html, pages, posts, outDir),
+      ),
+    }),
+    {},
   );
+
+  return writes;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -182,10 +215,10 @@ const getSiteFiles = async (siteDir: string, outDir: string): Promise<Array<Prom
   console.info("Regenerating Site...");
   const fileWrites = await getSiteFiles(sitePath, outDir);
   const files = await Promise.all(
-    fileWrites.map((write) =>
-      write.then((filepath) => {
-        return [filepath, `${Date.now() - startTime}ms`];
-      }),
+    Object.entries(fileWrites).map(([file, write]) =>
+      write
+        .then((filepath) => ({ filepath, time: `${Date.now() - startTime}ms` }))
+        .catch((error) => ({ filepath: file, error })),
     ),
   );
   console.table(files);

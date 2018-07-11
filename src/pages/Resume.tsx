@@ -215,39 +215,17 @@ const monthMap: { [month: number]: string } = {
 };
 
 const InlineIcon: StatelessComponent = ({ children }) => (
-  <span
-    className="InlineIcon"
-    style={{
-      display: "inline-block",
-      width: "1em",
-      height: "1em",
-      margin: "auto 0.5em",
-      verticalAlign: "middle",
-    }}
-  >
-    {children}
-  </span>
+  <span className="InlineIcon">{children}</span>
 );
 
-const Section: StatelessComponent<{ heading: string; className: string }> = ({
-  children,
-  className,
-  heading,
-}) => (
-  <section
-    className={`Section ${className}`}
-    style={{ borderTop: "1px solid #eee", marginTop: "1em" }}
-  >
-    <h3 className="title">{heading}</h3>
+const Section: StatelessComponent<{ heading: string }> = ({ children, heading }) => (
+  <section className={`Section`}>
+    <h3 className="Section__title">{heading}</h3>
     {children}
   </section>
 );
 
-const NoStyleUL: StatelessComponent = ({ children }) => (
-  <ul className="NoStyleUL" style={{ listStyle: "none", paddingLeft: 0, margin: 0 }}>
-    {children}
-  </ul>
-);
+const NoStyleUL: StatelessComponent = ({ children }) => <ul className="NoStyleUL">{children}</ul>;
 
 const Skill: StatelessComponent<ISkill> = ({ skill, tools, Icon }) => (
   <li key={skill}>
@@ -269,20 +247,8 @@ const Job: StatelessComponent<IJob> = ({
   responsibilities,
   technologies,
 }) => (
-  <div
-    key={company + title}
-    className="job"
-    style={{ display: "flex", flexDirection: "column", flexWrap: "wrap", marginTop: "1em" }}
-  >
-    <div
-      className="placement"
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-      }}
-    >
+  <div key={company + title} className="Job">
+    <div className="Job__placement">
       <span className="company">
         <a href={website}>{company}</a>
       </span>
@@ -291,13 +257,13 @@ const Job: StatelessComponent<IJob> = ({
         {endDate ? `${monthMap[endDate.getMonth() + 1]} ${endDate.getFullYear()}` : "Present"}
       </span>
     </div>
-    <div className="role">
+    <div className="Job__role">
       <em>{title}</em>
     </div>
-    <div className="description">
+    <div className="Job__description">
       <strong>{description}</strong>
     </div>
-    <div className="technologies">
+    <div className="Job__technologies">
       <InlineIcon>
         <svg viewBox="0 0 1792 1792">
           <path d="M553 1399l-50 50q-10 10-23 10t-23-10L-9 983q-10-10-10-23t10-23l466-466q10-10 23-10t23 10l50 50q10 10 10 23t-10 23L160 960l393 393q10 10 10 23t-10 23zm591-1067L771 1623q-4 13-15.5 19.5T732 1645l-62-17q-13-4-19.5-15.5T648 1588l373-1291q4-13 15.5-19.5t23.5-2.5l62 17q13 4 19.5 15.5t2.5 24.5zm657 651l-466 466q-10 10-23 10t-23-10l-50-50q-10-10-10-23t10-23l393-393-393-393q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l466 466q10 10 10 23t-10 23z" />
@@ -309,7 +275,7 @@ const Job: StatelessComponent<IJob> = ({
         )}
       </code>
     </div>
-    <div className="responsibilities">
+    <div className="Job__responsibilities">
       <NoStyleUL>
         {responsibilities.map((responsibility) => (
           <li key={responsibility}>
@@ -327,28 +293,16 @@ const Job: StatelessComponent<IJob> = ({
 );
 
 const Education: StatelessComponent<IEducation> = ({ school, degree, website, conferralDate }) => (
-  <div
-    key={school + degree}
-    className="education"
-    style={{ display: "flex", flexDirection: "column" }}
-  >
-    <div
-      className="convocation"
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-      }}
-    >
-      <span className="school">
+  <div key={school + degree} className="Education">
+    <div className="Education__convocation">
+      <span className="Education__school">
         <a href={website}>{school}</a>
       </span>
-      <span className="conferred">
+      <span className="Education__conferred">
         {monthMap[conferralDate.getMonth()] + " " + conferralDate.getFullYear()}
       </span>
     </div>
-    <div className="degree">
+    <div className="Education__degree">
       <InlineIcon>
         <svg viewBox="0 0 1792 1792">
           <path d="M1518 836l18 316q4 69-82 128t-235 93.5-323 34.5-323-34.5-235-93.5-82-128l18-316 574 181q22 7 48 7t48-7zm530-324q0 23-22 31L906 895q-4 1-10 1t-10-1L234 689q-43 34-71 111.5T129 979q63 36 63 109 0 69-58 107l58 433q2 14-8 25-9 11-24 11H-32q-15 0-24-11-10-11-8-25l58-433q-58-38-58-107 0-73 65-111 11-207 98-330l-333-104q-22-8-22-31t22-31L886 129q4-1 10-1t10 1l1120 352q22 8 22 31z" />
@@ -361,18 +315,14 @@ const Education: StatelessComponent<IEducation> = ({ school, degree, website, co
 
 const Resume: React.StatelessComponent<IResume> = ({ profile, education, experience, skills }) => (
   <article className="Resume">
-    <Section className="profile" heading="Profile">
-      <p className="body">{profile}</p>
+    <Section heading="Profile">
+      <p>{profile}</p>
     </Section>
-    <Section className="skills" heading="Skills">
+    <Section heading="Skills">
       <NoStyleUL>{skills.map(Skill)}</NoStyleUL>
     </Section>
-    <Section className="experience" heading="Experience">
-      {experience.map(Job)}
-    </Section>
-    <Section className="education" heading="Education">
-      {education.map(Education)}
-    </Section>
+    <Section heading="Experience">{experience.map(Job)}</Section>
+    <Section heading="Education">{education.map(Education)}</Section>
   </article>
 );
 

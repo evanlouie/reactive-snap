@@ -21,32 +21,30 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
         rowGap: "1em",
       }}
     >
-      <div className="Header" style={{ gridArea: "header" }}>
+      <div className="header" style={{ gridArea: "header" }}>
         <a href="/">
           <span className="InlineIcon" style={{ display: "inline-block", width: logoWidth }}>
             <Logo />
           </span>
         </a>
       </div>
-      <nav className="Menu" style={{ gridArea: "menu" }}>
-        <ul>
-          {pages.map((page) => (
-            <li key={page.title}>
-              <a href={"/" + page.url}>{page.title}</a>
-            </li>
-          ))}
-        </ul>
+      <nav className="top-nav" style={{ gridArea: "menu" }}>
+        {pages.map((page) => (
+          <a className="top-nav__link" key={page.title} href={"/" + page.url}>
+            {page.title}
+          </a>
+        ))}
       </nav>
-      <main className="Main" style={{ gridArea: " body" }}>
+      <main className="main" style={{ gridArea: "body" }}>
         {children}
       </main>
-      <div className="Footer" style={{ gridArea: "footer" }}>
+      <div className="footer" style={{ gridArea: "footer" }}>
         <div style={{ textAlign: "center" }}>
           All content copyright Evan Louie © {new Date().getFullYear()} • All rights reserved.
         </div>
       </div>
       <div
-        className="Posts"
+        className="posts"
         style={{
           position: "fixed",
           top: 0,

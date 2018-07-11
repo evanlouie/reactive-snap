@@ -4,11 +4,15 @@ import { IPage, IPost } from "../types";
 
 const Post: StatelessComponent<IPost> = ({ title, postDate, excerpt, url }) => (
   <article className="Post" key={title}>
-    <h2>
-      <a href={"/" + url}>{title}</a>
+    <h2 className="Post__heading">
+      <a className="Post__link" href={"/" + url}>
+        {title}
+      </a>
     </h2>
-    <p>{excerpt}</p>
-    <time dateTime={postDate.toISOString()}>{postDate.toDateString()}</time>
+    <p className="Post__excerpt">{excerpt}</p>
+    <time className="Post__time" dateTime={postDate.toISOString()}>
+      {postDate.toDateString()}
+    </time>
   </article>
 );
 
@@ -19,7 +23,7 @@ const PostGrid: StatelessComponent<{ posts: IPost[] }> = ({ posts }) => (
 const Home: StatelessComponent<{ pages: IPage[]; posts: IPost[] }> = ({ posts }) => (
   <div className="Home">
     <header>
-      <h1>Evan Louie</h1>
+      <h1 className="Home__header">Evan Louie</h1>
       <details>
         <summary>Learn more...</summary>
         <p>

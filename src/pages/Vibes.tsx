@@ -66,10 +66,10 @@ const Vibes: StatelessComponent = () => {
         gridTemplateColumns: "repeat(auto-fill, minmax(25%, 1fr))",
       }}
     >
-      {vibes.map((ytId) => (
+      {vibes.map((youtubeId) => (
         <iframe
-          key={ytId}
-          src={`https://www.youtube-nocookie.com/embed/${ytId}`}
+          key={youtubeId}
+          src={`https://www.youtube-nocookie.com/embed/${youtubeId}`}
           width="560"
           height="315"
           frameBorder="0"

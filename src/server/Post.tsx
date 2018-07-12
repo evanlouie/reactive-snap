@@ -54,14 +54,16 @@ export const convertFileToPost = async (filepath: string): Promise<IPost> => {
     ? path.join("posts", noExtension[1]).toLowerCase()
     : Promise.reject(new Error(`Could not parse out extension-less filename from ${filepath}`)));
   const { html, frontMatter } = await parseMarkdown(filepath);
-  const title = ((match, _) =>
-    match
-      ? match[2]
-          .replace(/-/g, " ")
-          .split(" ")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ")
-      : _)(path.basename(filepath).match(/(\d{4}-\d{2}-\d{2})-(.+)\.(md|markdown)$/i), filename);
+  const isFormattedFilename = path
+    .basename(filepath)
+    .match(/(\d{4}-\d{2}-\d{2})-(.+)\.(md|markdown)$/i);
+  const title = isFormattedFilename
+    ? isFormattedFilename[2]
+        .replace(/-/g, " ")
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
+    : filename;
   const excerpt =
     html
       .replace(/<[^>]+>/g, "")

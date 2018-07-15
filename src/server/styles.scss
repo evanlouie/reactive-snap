@@ -48,6 +48,7 @@ body {
     border-radius: 3px;
     padding: 1em;
     white-space: pre-wrap; // https://css-tricks.com/snippets/css/make-pre-text-wrap/
+    overflow: scroll;
 
     code {
       font-size: small;

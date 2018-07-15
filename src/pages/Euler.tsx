@@ -16,9 +16,26 @@ import {
   IEulerProblem,
 } from "../server/euler";
 
+const generateEulerID = (problemNumber: number) => `euler-problem-${problemNumber}`;
 const Euler: StatelessComponent<{ problems: IEulerProblem[] }> = ({ problems }) => (
   <div className="Euler">
     <h1>Project Euler</h1>
+    <div>
+      <h2>Table Of Contents</h2>
+      <ul>
+        {problems.map((problem) => (
+          <li key={problem.problemNumber}>
+            <a href={"#" + generateEulerID(problem.problemNumber)}>
+              {`Problem ${problem.problemNumber} - ${problem.question
+                .split("\n")
+                .map((str) => str.trim())
+                .join(" ")
+                .slice(0, 80) + "..."}`}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
     <div
       className="problems"
       style={{
@@ -29,7 +46,7 @@ const Euler: StatelessComponent<{ problems: IEulerProblem[] }> = ({ problems }) 
     >
       {problems.map((problem) => (
         <div key={problem.problemNumber} className="Problem">
-          <h2>Problem {problem.problemNumber}</h2>
+          <h2 id={generateEulerID(problem.problemNumber)}>Problem {problem.problemNumber}</h2>
           <h3>Question</h3>
           <pre>
             {problem.question
@@ -42,7 +59,7 @@ const Euler: StatelessComponent<{ problems: IEulerProblem[] }> = ({ problems }) 
           <pre>
             <code
               dangerouslySetInnerHTML={{
-                __html: HighlightJS.highlightAuto(problem.answer.toString().trim(), ["typescript"])
+                __html: HighlightJS.highlightAuto(problem.answer.toString().trim(), ["javascript"])
                   .value,
               }}
             />

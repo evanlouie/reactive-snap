@@ -50,7 +50,7 @@ export const minify = async (html: string): Promise<string> =>
  * Convert `${__dirname}/server/styles.scss` to css
  * @param includePaths Array of directory paths to to search through when using @import in scss files
  */
-export const getCSS = async (includePaths = [__dirname]): Promise<string> => {
+export const siteStyles = async (includePaths = [__dirname]): Promise<string> => {
   const scss = await fs.readFile(path.join(__dirname, "styles.scss"), { encoding: "utf8" });
   const result = await promisify(sass.render)({ data: scss, includePaths });
   const css = result.css.toString();

@@ -16,7 +16,6 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
         gridTemplate:
           "'header menu menu' auto" +
           "'body body body' auto" +
-          // "'footer footer footer' auto / 3em auto auto",
           `'footer footer footer' auto / ${logoWidth} auto auto`,
         rowGap: "1em",
       }}
@@ -43,7 +42,7 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
           All content copyright Evan Louie © {new Date().getFullYear()} • All rights reserved.
         </div>
       </div>
-      <div
+      {/* <div
         className="posts"
         style={{
           position: "fixed",
@@ -61,7 +60,7 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { StatelessComponent } from "react";
 
 const Vibes: StatelessComponent = () => {
   const vibes: string[] = [
+    "PmwX9nlW8Sw",
     "5SDJFvG2dKk",
     "32GKV2ky6_s",
     "PB0HXiEV_kw",

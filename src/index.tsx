@@ -8,15 +8,7 @@ import { Page } from "./components/Page";
 import { Post } from "./components/Post";
 import { BlogContext } from "./contexts/BlogContext";
 import { DefaultLayout } from "./layouts/DefaultLayout";
-import {
-  compressCSS,
-  compressJS,
-  getCSS,
-  normalizeCSS,
-  react,
-  reactDom,
-  turbolinks,
-} from "./server/File";
+import { compressCSS, compressJS, normalizeCSS, siteStyles, turbolinks } from "./server/File";
 import { convertFileToPage } from "./server/Page";
 import { convertFileToPost } from "./server/Post";
 import { IPage, IPost } from "./types";
@@ -99,10 +91,10 @@ const renderToStaticMarkup = async (
   posts: IPost[],
 ): Promise<string> => {
   const [scripts, styles]: [IScript[], IStyle[]] = await Promise.all([
-    Promise.all([turbolinks(), react(), reactDom()])
+    Promise.all([turbolinks()])
       .then((uncompressed) => Promise.all(uncompressed.map(compressJS)))
       .then((compressed) => compressed.map((script) => ({ script }))),
-    Promise.all([normalizeCSS(), getCSS()])
+    Promise.all([normalizeCSS(), siteStyles()])
       .then((uncompressed) => Promise.all(uncompressed.map(compressCSS)))
       .then((compressed) => compressed.map((css) => ({ css }))),
   ]);

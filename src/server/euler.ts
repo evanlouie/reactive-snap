@@ -706,3 +706,42 @@ export const Euler14: IEulerProblem = {
     })();
   },
 };
+
+// const Euler15: IEulerProblem = {
+//   problemNumber: 15,
+//   question: `
+//   Starting in the top left corner of a 2×2 grid, and only being able to move to the right and down, there are exactly 6 routes to the bottom right corner.
+//   How many such routes are there through a 20×20 grid?`,
+
+//   answer: () => {
+//     const generatePaths = (
+//       currX: number,
+//       currY: number,
+//       path: number[][] = [],
+//       sideLength: number = 20,
+//     ) => (currX === sideLength - 1 && currY === sideLength - 1 ? path : path);
+//   },
+// };
+
+export const Euler16: IEulerProblem = {
+  problemNumber: 16,
+  question: `
+  2^15 = 32768 and the sum of its digits is 3 + 2 + 7 + 6 + 8 = 26.
+  What is the sum of the digits of the number 2^1000?`,
+  answer: () => {
+    const double = (n: number[], doubled: number[] = [], carry: number = 0): number[] =>
+      n.length === 0
+        ? carry > 0
+          ? [carry, ...doubled]
+          : doubled
+        : ((columnProduct = (n.slice(-1).pop() || 0) * 2 + carry) =>
+            double(
+              n.slice(0, n.length - 1),
+              [columnProduct % 10, ...doubled],
+              Math.floor(columnProduct / 10),
+            ))();
+    const thousandthPower: number[] = [...Array(1000)].reduce((doubled) => double(doubled), [1]);
+
+    return thousandthPower.reduce((sum, column) => sum + column);
+  },
+};

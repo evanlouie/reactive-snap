@@ -36,13 +36,6 @@ export const Euler2: IEulerProblem = {
       }
     };
 
-    const answerRecursive = (
-      sum: number = 0,
-      sequence: IterableIterator<number> = fibonacciGenerator(),
-      fibonacci: number = 0,
-    ): number =>
-      fibonacci > 4000000 ? sum : answerRecursive(sum + fibonacci, sequence, sequence.next().value);
-
     return ((sum: number = 0) => {
       for (const fibonacci of fibonacciGenerator()) {
         if (fibonacci > below) {
@@ -674,5 +667,42 @@ export const Euler13: IEulerProblem = {
     const finalSum = numberArrays.reduce((sumOfSums, sum) => addListsOfNumbers(sumOfSums, sum));
 
     return Number.parseInt(finalSum.slice(0, 10).join(""), 10);
+  },
+};
+
+export const Euler14: IEulerProblem = {
+  problemNumber: 14,
+  question: `
+  The following iterative sequence is defined for the set of positive integers:
+  n → n/2 (n is even)
+  n → 3n + 1 (n is odd)
+  Using the rule above and starting with 13, we generate the following sequence:
+  13 → 40 → 20 → 10 → 5 → 16 → 8 → 4 → 2 → 1
+  It can be seen that this sequence (starting at 13 and finishing at 1) contains 10 terms. Although it has not been proved yet (Collatz Problem), it is thought that all starting numbers finish at 1.
+  Which starting number, under one million, produces the longest chain?
+  NOTE: Once the chain starts the terms are allowed to go above one million.`,
+
+  answer: () => {
+    // const collatzLength = (n: number, sequenceLength: number = 0): number =>
+    //   n === 1
+    //     ? sequenceLength + 1
+    //     : collatzLength(n % 2 === 0 ? n / 2 : n * 3 + 1, sequenceLength + 1);
+
+    const collatzLength = (n: number, sequenceLength: number = 0): number => {
+      while (n !== 1) {
+        sequenceLength = sequenceLength + 1;
+        n = n % 2 === 0 ? n / 2 : n * 3 + 1;
+      }
+      return sequenceLength + 1;
+    };
+
+    return ((maxLength = 0, indexOfMax = -1) => {
+      for (let i = 1; i < 1000000; i++) {
+        const c = collatzLength(i);
+        indexOfMax = c > maxLength ? i : indexOfMax;
+        maxLength = c > maxLength ? c : maxLength;
+      }
+      return indexOfMax;
+    })();
   },
 };

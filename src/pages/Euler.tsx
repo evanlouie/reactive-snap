@@ -7,6 +7,7 @@ import {
   Euler11,
   Euler12,
   Euler13,
+  Euler14,
   Euler2,
   Euler3,
   Euler4,
@@ -102,6 +103,7 @@ export default (() => (
       Euler11,
       Euler12,
       Euler13,
+      Euler14,
     ]}
   />
 )) as StatelessComponent;

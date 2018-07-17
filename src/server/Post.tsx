@@ -77,7 +77,8 @@ export const convertFileToPost = async (filepath: string): Promise<IPost> => {
       .replace(/&#39;/g, "'")
       .replace(/&amp;/g, "&")
       .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">") + "...";
+      .replace(/&gt;/g, ">")
+      .trim() + "...";
 
   return {
     title,

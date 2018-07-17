@@ -33,6 +33,9 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
             {page.title}
           </a>
         ))}
+        <a className="top-nav__link" href="https://github.com/evanlouie/">
+          GitHub
+        </a>
       </nav>
       <main className="main" style={{ gridArea: "body" }}>
         {children}

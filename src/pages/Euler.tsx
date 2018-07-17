@@ -5,6 +5,7 @@ import {
   Euler10,
   Euler11,
   Euler12,
+  Euler13,
   Euler2,
   Euler3,
   Euler4,
@@ -28,9 +29,11 @@ const Euler: StatelessComponent<{ problems: IEulerProblem[] }> = ({ problems }) 
             <a href={"#" + generateEulerID(problem.problemNumber)}>
               {`Problem ${problem.problemNumber} - ${problem.question
                 .split("\n")
+                .filter((line) => line)
                 .map((str) => str.trim())
                 .join(" ")
-                .slice(0, 80) + "..."}`}
+                .slice(0, 80)
+                .trim() + "..."}`}
             </a>
           </li>
         ))}
@@ -40,17 +43,22 @@ const Euler: StatelessComponent<{ problems: IEulerProblem[] }> = ({ problems }) 
       className="problems"
       style={{
         display: "grid",
-        gridTemplate: "auto / repeat(auto-fill, minmax(25em, 1fr))",
+        // gridTemplate: "auto / repeat(auto-fill, minmax(25em, 1fr))",
         gap: "1em",
       }}
     >
       {problems.map((problem) => (
-        <div key={problem.problemNumber} className="Problem">
+        <div
+          key={problem.problemNumber}
+          className="Problem"
+          style={{ border: "1px dotted #999999", padding: "1em" }}
+        >
           <h2 id={generateEulerID(problem.problemNumber)}>Problem {problem.problemNumber}</h2>
           <h3>Question</h3>
           <pre>
             {problem.question
               .split("\n")
+              .filter((line) => line)
               .map((str) => str.trim())
               .join("\n")
               .trim()}
@@ -85,6 +93,7 @@ export default (() => (
       Euler10,
       Euler11,
       Euler12,
+      Euler13,
     ]}
   />
 )) as StatelessComponent;

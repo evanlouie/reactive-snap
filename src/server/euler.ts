@@ -62,7 +62,7 @@ export const Euler3: IEulerProblem = {
   question: `
   The prime factors of 13195 are 5, 7, 13 and 29.
   What is the largest prime factor of the number 600851475143 ?`,
-  answer: () => {
+  answer: (factorsOf = 600851475143) => {
     /**
      * Recursive solution. V8 doesn't support TCO. Breaks on node and most browsers
      */
@@ -93,7 +93,7 @@ export const Euler3: IEulerProblem = {
       return [...factors];
     };
 
-    return Math.max(...primeFactors(600851475143));
+    return Math.max(...primeFactors(factorsOf));
   },
 };
 
@@ -670,8 +670,8 @@ export const Euler13: IEulerProblem = {
         : addListsOfNumbers(
             a.slice(0, a.length - 1),
             b.slice(0, b.length - 1),
-            [(([...a].pop() || 0) + ([...b].pop() || 0) + carry) % 10, ...sum],
-            Math.floor((([...a].pop() || 0) + ([...b].pop() || 0) + carry) / 10),
+            [((a.slice(-1).pop() || 0) + (b.slice(-1).pop() || 0) + carry) % 10, ...sum],
+            Math.floor(((a.slice(-1).pop() || 0) + (b.slice(-1).pop() || 0) + carry) / 10),
           );
 
     const finalSum = numberArrays.reduce((sumOfSums, sum) => addListsOfNumbers(sumOfSums, sum));

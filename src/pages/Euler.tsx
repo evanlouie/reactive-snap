@@ -1,4 +1,5 @@
 import HighlightJS from "highlight.js";
+import prettier from "prettier";
 import React, { StatelessComponent } from "react";
 import {
   Euler1,
@@ -67,8 +68,10 @@ const Euler: StatelessComponent<{ problems: IEulerProblem[] }> = ({ problems }) 
           <pre>
             <code
               dangerouslySetInnerHTML={{
-                __html: HighlightJS.highlightAuto(problem.answer.toString().trim(), ["javascript"])
-                  .value,
+                __html: HighlightJS.highlightAuto(
+                  prettier.format(problem.answer.toString(), { parser: "typescript" }),
+                  ["javascript"],
+                ).value,
               }}
             />
           </pre>

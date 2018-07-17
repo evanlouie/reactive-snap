@@ -12,9 +12,7 @@ export const Euler1: IEulerProblem = {
   If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.
   Find the sum of all the multiples of 3 or 5 below 1000.`,
   answer: (below: number = 1000) =>
-    [...Array(below)]
-      .map((_, index) => index + 1)
-      .reduce((sum, n) => (n % 3 === 0 || n % 5 === 0 ? sum + n : sum), 0),
+    [...Array(below)].reduce((sum, _, n) => (n % 3 === 0 || n % 5 === 0 ? sum + n : sum), 0),
 };
 
 export const Euler2: IEulerProblem = {
@@ -50,7 +48,7 @@ export const Euler2: IEulerProblem = {
         if (fibonacci > below) {
           break;
         }
-        sum = sum + fibonacci;
+        sum = fibonacci % 2 === 0 ? sum + fibonacci : sum;
       }
       return sum;
     })();
@@ -157,12 +155,10 @@ export const Euler6: IEulerProblem = {
   Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.`,
   answer: () => {
     const sumOfSquares = (n: number): number =>
-      [...Array(n)]
-        .map((_, index) => Math.pow(index + 1, 2))
-        .reduce((sum, square) => sum + square, 0);
+      [...Array(n)].reduce((sum, _, index) => sum + Math.pow(index + 1, 2), 0);
 
     const squareOfSum = (n: number): number =>
-      Math.pow([...Array(n)].map((_, index) => index + 1).reduce((sum, num) => sum + num, 0), 2);
+      Math.pow([...Array(n)].reduce((sum, _, index) => sum + (index + 1), 0), 2);
 
     return squareOfSum(100) - sumOfSquares(100);
   },

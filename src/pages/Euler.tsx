@@ -69,7 +69,11 @@ const Euler: StatelessComponent<{ problems: IEulerProblem[] }> = ({ problems }) 
             <code
               dangerouslySetInnerHTML={{
                 __html: HighlightJS.highlightAuto(
-                  prettier.format(problem.answer.toString(), { parser: "typescript" }),
+                  prettier.format(problem.answer.toString(), {
+                    parser: "typescript",
+                    trailingComma: "all",
+                    arrowParens: "always",
+                  }),
                   ["javascript"],
                 ).value,
               }}

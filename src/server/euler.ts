@@ -667,12 +667,13 @@ export const Euler13: IEulerProblem = {
         ? carry > 0
           ? [carry, ...sum]
           : sum
-        : addListsOfNumbers(
-            a.slice(0, a.length - 1),
-            b.slice(0, b.length - 1),
-            [((a.slice(-1).pop() || 0) + (b.slice(-1).pop() || 0) + carry) % 10, ...sum],
-            Math.floor(((a.slice(-1).pop() || 0) + (b.slice(-1).pop() || 0) + carry) / 10),
-          );
+        : ((columnSum: number = (a.slice(-1).pop() || 0) + (b.slice(-1).pop() || 0) + carry) =>
+            addListsOfNumbers(
+              a.slice(0, a.length - 1),
+              b.slice(0, b.length - 1),
+              [columnSum % 10, ...sum],
+              Math.floor(columnSum / 10),
+            ))();
 
     const finalSum = numberArrays.reduce((sumOfSums, sum) => addListsOfNumbers(sumOfSums, sum));
 

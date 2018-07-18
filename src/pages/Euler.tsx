@@ -57,6 +57,9 @@ const Euler: StatelessComponent<{ problems: IEulerProblem[] }> = ({ problems }) 
           style={{ border: "1px dotted #999999", padding: "1em" }}
         >
           <h2 id={generateEulerID(problem.problemNumber)}>Problem {problem.problemNumber}</h2>
+          <a href={`https://projecteuler.net/problem=${problem.problemNumber}`} target="_blank">
+            link
+          </a>
           <h3>Question</h3>
           <pre>
             {problem.question

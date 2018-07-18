@@ -12,19 +12,24 @@ One of the less well known or used features of modern browsers is Web Worker sup
 Want an example? Just try to run this code in your browsers console... Its my solution to [Problem 5](https://github.com/evanlouie/project-euler/blob/master/src/lib/EulerProblem5.ts) of [Project Euler](https://projecteuler.net/problem=5)
 
 ```javascript
-(function() {
-  for (
-    var e = function(e, t, n) {
-        for (var o = !0, r = t; r <= n; r++) e % r !== 0 && (o = !1);
-        return o;
-      },
-      t = 0,
-      n = 0;
-    0 === t;
+(() => {
+  const isDivisibleFrom = (n, start, end, current) =>
+    typeof current === "undefined"
+      ? isDivisibleFrom(n, start, end, start)
+      : current === end
+        ? n % current === 0
+        : current > end
+          ? n % current === 0 && isDivisibleFrom(n, start, end, current - 1)
+          : n % current === 0 && isDivisibleFrom(n, start, end, current + 1);
 
-  )
-    n++, e(n, 1, 20) && (t = n);
-  return t.toString();
+  return (() => {
+    for (let x = 1; x < Infinity; x++) {
+      if (isDivisibleFrom(x, 20, 1)) {
+        return x;
+      }
+    }
+    throw new Error("No answer found");
+  })();
 })();
 ```
 

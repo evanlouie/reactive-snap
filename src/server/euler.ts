@@ -22,10 +22,10 @@ export const Euler2: IEulerProblem = {
   1, 2, 3, 5, 8, 13, 21, 34, 55, 89, ...
   By considering the terms in the Fibonacci sequence whose values do not exceed four million, find the sum of the even-valued terms.`,
   answer: (below: number = 4000000) => {
-    const fibs = ([a, b] = [0, 1]) => ({
-      value: a + b,
-      next: () => fibs([b, a + b]),
-    });
+    // const fibs = ([a, b] = [0, 1]) => ({
+    //   value: a + b,
+    //   next: () => fibs([b, a + b]),
+    // });
 
     const fibonacciGenerator = function*([a, b, c] = [1, 2, 3]) {
       while (true) {
@@ -57,16 +57,16 @@ export const Euler3: IEulerProblem = {
     /**
      * Recursive solution. V8 doesn't support TCO. Breaks on node and most browsers
      */
-    const primeFactorsRecursive = (
-      n: number,
-      factors: Set<number> = new Set(),
-      factor = 2,
-    ): number[] =>
-      n === 1
-        ? [...factors]
-        : n % factor === 0
-          ? primeFactorsRecursive(n / factor, factors.add(factor), factor)
-          : primeFactorsRecursive(n, factors.add(factor), factor + 1);
+    // const primeFactorsRecursive = (
+    //   n: number,
+    //   factors: Set<number> = new Set(),
+    //   factor = 2,
+    // ): number[] =>
+    //   n === 1
+    //     ? [...factors]
+    //     : n % factor === 0
+    //       ? primeFactorsRecursive(n / factor, factors.add(factor), factor)
+    //       : primeFactorsRecursive(n, factors.add(factor), factor + 1);
 
     const primeFactors = (
       target: number,
@@ -102,11 +102,14 @@ export const Euler4: IEulerProblem = {
             .reverse()
             .join("");
 
-    return Math.max(
-      ...[...Array(1000)]
-        .map((_, x) => [...Array(1000)].map((__, y) => (x + 1) * (y + 1)))
-        .reduce((palindromes, numbers) => [...palindromes, ...numbers.filter(isPalindrome)], []),
-    );
+    const largestPalindrome = [...Array(1000)]
+      .map((_, x) => [...Array(1000)].map((__, y) => x * y).filter(isPalindrome))
+      .reduce((runningMax, palindromes) => {
+        const currentMax = Math.max(...palindromes);
+        return currentMax > runningMax ? currentMax : runningMax;
+      }, 0);
+
+    return largestPalindrome;
   },
 };
 
@@ -115,17 +118,17 @@ export const Euler5: IEulerProblem = {
   question: `2520 is the smallest number that can be divided by each of the numbers from 1 to 10 without any remainder.
   What is the smallest positive number that is evenly divisible by all of the numbers from 1 to 20?`,
   answer: () => {
-    const isDivisibleFrom = (n: number, from: number, to: number, current?: number): boolean =>
-      !current
-        ? isDivisibleFrom(n, from, to, from)
-        : current === to
+    const isDivisibleFrom = (n: number, start: number, end: number, current?: number): boolean =>
+      typeof current === "undefined"
+        ? isDivisibleFrom(n, start, end, start)
+        : current === end
           ? n % current === 0
-          : current > to
-            ? n % current === 0 && isDivisibleFrom(n, from, to, current - 1)
-            : n % current === 0 && isDivisibleFrom(n, from, to, current + 1);
+          : current > end
+            ? n % current === 0 && isDivisibleFrom(n, start, end, current - 1)
+            : n % current === 0 && isDivisibleFrom(n, start, end, current + 1);
 
-    const answerRecursive = (current: number = 1): number =>
-      isDivisibleFrom(current, 20, 1) ? current : answerRecursive(current + 1);
+    // const answerRecursive = (current: number = 1): number =>
+    //   isDivisibleFrom(current, 20, 1) ? current : answerRecursive(current + 1);
 
     return (() => {
       for (let x = 1; x < Infinity; x++) {
@@ -262,9 +265,9 @@ export const Euler9: IEulerProblem = {
           .map((__, b) => [a, b, Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2))])
           .filter(([x, y, z]) => Number.isInteger(z) && x < y && y < z && x + y + z === 1000),
       )
-      .reduce((tripletsList, triplets) => [...tripletsList, ...triplets], [])
-      .reduce((numbers, triplet) => [...numbers, ...triplet], [])
-      .reduce((product, num) => product * num, 1),
+      .reduce((flattened, triplets) => [...flattened, ...triplets], [])
+      .reduce((_, triplet) => triplet, [])
+      .reduce((product, n) => product * n, 1),
 };
 
 export const Euler10: IEulerProblem = {
@@ -411,8 +414,8 @@ export const Euler12: IEulerProblem = {
       }
     };
 
-    const factorize = (n: number) =>
-      [...Array(Math.round(Math.sqrt(n)))].reduce<number[]>(
+    const factorize = (n: number): number[] =>
+      [...Array(Math.round(Math.sqrt(n)))].reduce(
         (factors, _, index) =>
           n % (index + 1) === 0 ? [...factors, index + 1, n / (index + 1)] : factors,
         [],
@@ -646,23 +649,33 @@ export const Euler13: IEulerProblem = {
           .map((char) => Number.parseInt(char, 10)),
       );
 
+    /**
+     * Adds two lists of integers assuming the two lists represent two decimal numbers
+     * Example: 12345 === [1,2,3,4,5]
+     * @param a list to add to
+     * @param b list to add
+     * @param _sum running sum of both lists
+     * @param _carry carryover digit from previous iteration
+     */
     const addListsOfNumbers = (
       a: number[],
       b: number[],
-      sum: number[] = [],
-      carry: number = 0,
+      _sum: number[] = [],
+      _carry: number = 0,
     ): number[] =>
       a.length === 0 && b.length === 0
-        ? carry > 0
-          ? [carry, ...sum]
-          : sum
-        : ((columnSum: number = (a.slice(-1).pop() || 0) + (b.slice(-1).pop() || 0) + carry) =>
-            addListsOfNumbers(
+        ? _carry > 0
+          ? [_carry, ..._sum]
+          : _sum
+        : (() => {
+            const columnSum: number = (a.slice(-1).pop() || 0) + (b.slice(-1).pop() || 0) + _carry;
+            return addListsOfNumbers(
               a.slice(0, a.length - 1),
               b.slice(0, b.length - 1),
-              [columnSum % 10, ...sum],
+              [columnSum % 10, ..._sum],
               Math.floor(columnSum / 10),
-            ))();
+            );
+          })();
 
     const finalSum = numberArrays.reduce((sumOfSums, sum) => addListsOfNumbers(sumOfSums, sum));
 
@@ -683,22 +696,21 @@ export const Euler14: IEulerProblem = {
   NOTE: Once the chain starts the terms are allowed to go above one million.`,
 
   answer: () => {
-    // const collatzLength = (n: number, sequenceLength: number = 0): number =>
-    //   n === 1
-    //     ? sequenceLength + 1
-    //     : collatzLength(n % 2 === 0 ? n / 2 : n * 3 + 1, sequenceLength + 1);
+    // Recursive unusable; causes stack overflow
+    // const collatz = (n: number, sequence: number[] = []): number[] =>
+    //   n === 1 ? [...sequence, n] : collatz(n % 2 === 0 ? n / 2 : n * 3 + 1, [...sequence, n]);
 
-    const collatzLength = (n: number, sequenceLength: number = 0): number => {
+    const collatz = function*(n: number) {
       while (n !== 1) {
-        sequenceLength = sequenceLength + 1;
+        yield n;
         n = n % 2 === 0 ? n / 2 : n * 3 + 1;
       }
-      return sequenceLength + 1;
+      yield n;
     };
 
     return ((maxLength = 0, indexOfMax = -1) => {
       for (let i = 1; i < 1000000; i++) {
-        const c = collatzLength(i);
+        const c = [...collatz(i)].length;
         indexOfMax = c > maxLength ? i : indexOfMax;
         maxLength = c > maxLength ? c : maxLength;
       }
@@ -729,17 +741,25 @@ export const Euler16: IEulerProblem = {
   2^15 = 32768 and the sum of its digits is 3 + 2 + 7 + 6 + 8 = 26.
   What is the sum of the digits of the number 2^1000?`,
   answer: () => {
-    const double = (n: number[], doubled: number[] = [], carry: number = 0): number[] =>
+    /**
+     * Doubles every number in the list n, assuming the list represents an decimal integer
+     * @param n list of numbers to double
+     * @param _doubled running list of doubled numbers
+     * @param _carry carry over from previous iterations
+     */
+    const double = (n: number[], _doubled: number[] = [], _carry: number = 0): number[] =>
       n.length === 0
-        ? carry > 0
-          ? [carry, ...doubled]
-          : doubled
-        : ((columnProduct = (n.slice(-1).pop() || 0) * 2 + carry) =>
-            double(
+        ? _carry > 0
+          ? [_carry, ..._doubled]
+          : _doubled
+        : (() => {
+            const columnProduct = (n.slice(-1).pop() || 0) * 2 + _carry;
+            return double(
               n.slice(0, n.length - 1),
-              [columnProduct % 10, ...doubled],
+              [columnProduct % 10, ..._doubled],
               Math.floor(columnProduct / 10),
-            ))();
+            );
+          })();
     const thousandthPower: number[] = [...Array(1000)].reduce((doubled) => double(doubled), [1]);
 
     return thousandthPower.reduce((sum, column) => sum + column);

@@ -27,7 +27,7 @@ class MergeSort {
     } else {
       const middleIndex = Math.round(list.length / 2);
       const left = this.sort(list.slice(0, middleIndex));
-      const right = this.sort(list.slice(middleIndex, list.length - 1));
+      const right = this.sort(list.slice(middleIndex, list.length));
 
       return this.merge<T>(left, right);
     }
@@ -131,9 +131,7 @@ class ExternalMergeSort {
   }
 }
 
-const randomNumbers: number[] = Array(10000)
-  .fill(undefined)
-  .map(() => Math.round(Math.random() * 100000));
+const randomNumbers: number[] = [...Array(10000)].map(() => Math.round(Math.random() * 100000));
 ExternalMergeSort.sort(randomNumbers).then((sorted) => console.info("Done:", sorted));
 ```
 

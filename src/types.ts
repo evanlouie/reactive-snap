@@ -18,9 +18,9 @@ export interface ILayout {
   pages: IPage[];
 }
 
-export interface IDirectory {
+export interface ISitemap {
   index: React.ReactNode;
   children: {
-    [key: string]: IDirectory;
+    [key: string]: ISitemap;
   };
 }

@@ -22,15 +22,28 @@ export const Euler2: IEulerProblem = {
   1, 2, 3, 5, 8, 13, 21, 34, 55, 89, ...
   By considering the terms in the Fibonacci sequence whose values do not exceed four million, find the sum of the even-valued terms.`,
   answer: (below: number = 4000000) => {
-    // const fibs = ([a, b] = [0, 1]) => ({
-    //   value: a + b,
-    //   next: () => fibs([b, a + b]),
-    // });
+    // const fib = (n: number, m: { [_: number]: number } = { 1: 1, 2: 2 }): number =>
+    //   m[n] ? m[n] : (m[n] = fib(n - 1, m) + fib(n - 2, m));
 
-    const fibonacciGenerator = function*([a, b, c] = [1, 2, 3]) {
+    // const fib = (n: number, m: Map<number, number> = new Map([[1, 1], [2, 2]])): number =>
+    //   m.has(n) ? (m.get(n) as number) : (m.set(n, fib(n - 1, m) + fib(n - 2, m)).get(n) as number);
+
+    // const fib = (n: number, [a, b] = [0, 1]): number => (n === 0 ? a : fib(n - 1, [b, a + b]));
+
+    const fib = (n: number, [a, b] = [0, 1]) => {
+      while (true) {
+        if (n === 0) {
+          return a;
+        } else {
+          [n, [a, b]] = [n - 1, [b, a + b]];
+        }
+      }
+    };
+
+    const fibonacciGenerator = function*([a, b] = [1, 2]) {
       while (true) {
         yield a;
-        c = a + b;
+        const c = a + b;
         a = b;
         b = c;
       }
@@ -68,20 +81,16 @@ export const Euler3: IEulerProblem = {
     //       ? primeFactorsRecursive(n / factor, factors.add(factor), factor)
     //       : primeFactorsRecursive(n, factors.add(factor), factor + 1);
 
-    const primeFactors = (
-      target: number,
-      factors: Set<number> = new Set(),
-      factor = 2,
-    ): number[] => {
-      while (target > 1) {
-        if (target % factor === 0) {
-          factors.add(factor);
-          target = target / factor;
+    const primeFactors = (n: number, factors: Set<number> = new Set(), factor = 2): number[] => {
+      while (true) {
+        if (n === 1) {
+          return [...factors];
+        } else if (n % factor === 0) {
+          [n, factors, factor] = [n / factor, factors.add(factor), factor];
         } else {
-          factor = factor + 1;
+          [n, factors, factor] = [n, factors.add(factor), factor + 1];
         }
       }
-      return [...factors];
     };
 
     return Math.max(...primeFactors(factorsOf));
@@ -700,17 +709,27 @@ export const Euler14: IEulerProblem = {
     // const collatz = (n: number, sequence: number[] = []): number[] =>
     //   n === 1 ? [...sequence, n] : collatz(n % 2 === 0 ? n / 2 : n * 3 + 1, [...sequence, n]);
 
-    const collatz = function*(n: number) {
-      while (n !== 1) {
-        yield n;
-        n = n % 2 === 0 ? n / 2 : n * 3 + 1;
+    // const collatz = function*(n: number) {
+    //   while (n !== 1) {
+    //     yield n;
+    //     n = n % 2 === 0 ? n / 2 : n * 3 + 1;
+    //   }
+    //   yield n;
+    // };
+
+    const collatzLength = (n: number, length: number = 0) => {
+      while (true) {
+        if (n === 1) {
+          return length + 1;
+        } else {
+          [n, length] = [n % 2 === 0 ? n / 2 : n * 3 + 1, length + 1];
+        }
       }
-      yield n;
     };
 
     return ((maxLength = 0, indexOfMax = -1) => {
       for (let i = 1; i < 1000000; i++) {
-        const c = [...collatz(i)].length;
+        const c = collatzLength(i);
         indexOfMax = c > maxLength ? i : indexOfMax;
         maxLength = c > maxLength ? c : maxLength;
       }
@@ -765,3 +784,76 @@ export const Euler16: IEulerProblem = {
     return thousandthPower.reduce((sum, column) => sum + column);
   },
 };
+
+// const Euler17: IEulerProblem = {
+//   problemNumber: 17,
+//   question: `If the numbers 1 to 5 are written out in words: one, two, three, four, five, then there are 3 + 3 + 5 + 4 + 4 = 19 letters used in total.
+//   If all the numbers from 1 to 1000 (one thousand) inclusive were written out in words, how many letters would be used?`,
+//   answer: () => {
+//     const letterMap: { [n: number]: string } = {
+//       1: "one",
+//       2: "two",
+//       3: "three",
+//       4: "four",
+//       5: "five",
+//       6: "six",
+//       7: "seven",
+//       8: "eight",
+//       9: "nine",
+//     };
+//   },
+// };
+
+// const Euler18: IEulerProblem = {
+//   problemNumber: 18,
+//   question: `
+//   By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 23.
+//   3
+//   7 4
+//   2 4 6
+//   8 5 9 3
+//   That is, 3 + 7 + 4 + 9 = 23.
+//   Find the maximum total from top to bottom of the triangle below:
+//   75
+//   95 64
+//   17 47 82
+//   18 35 87 10
+//   20 04 82 47 65
+//   19 01 23 75 03 34
+//   88 02 77 73 07 63 67
+//   99 65 04 28 06 16 70 92
+//   41 41 26 56 83 40 80 70 33
+//   41 48 72 33 47 32 37 16 94 29
+//   53 71 44 65 25 43 91 52 97 51 14
+//   70 11 33 28 77 73 17 78 39 68 17 57
+//   91 71 52 38 17 14 91 43 58 50 27 29 48
+//   63 66 04 68 89 53 67 30 73 16 69 87 40 31
+//   04 62 98 27 23 09 70 98 73 93 38 53 60 04 23
+//   NOTE: As there are only 16384 routes, it is possible to solve this problem by trying every route. However, Problem 67, is the same challenge with a triangle containing one-hundred rows; it cannot be solved by brute force, and requires a clever method! ;o)`,
+//   answer: () => {
+//     const triangle = `
+//     75
+//     95 64
+//     17 47 82
+//     18 35 87 10
+//     20 04 82 47 65
+//     19 01 23 75 03 34
+//     88 02 77 73 07 63 67
+//     99 65 04 28 06 16 70 92
+//     41 41 26 56 83 40 80 70 33
+//     41 48 72 33 47 32 37 16 94 29
+//     53 71 44 65 25 43 91 52 97 51 14
+//     70 11 33 28 77 73 17 78 39 68 17 57
+//     91 71 52 38 17 14 91 43 58 50 27 29 48
+//     63 66 04 68 89 53 67 30 73 16 69 87 40 31
+//     04 62 98 27 23 09 70 98 73 93 38 53 60 04 23`
+//       .split("\n")
+//       .filter((line) => line)
+//       .map((line) =>
+//         line
+//           .trim()
+//           .split(" ")
+//           .map((n) => Number.parseInt(n, 10)),
+//       );
+//   },
+// };

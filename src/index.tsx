@@ -107,7 +107,7 @@ const renderToStaticMarkup = async (
     scripts,
     links: {
       styles: [
-        "https://fonts.googleapis.com/css?family=Roboto|Raleway|VT323",
+        "https://fonts.googleapis.com/css?family=Roboto|Raleway|VT323|Inconsolata",
         "https://cdn.rawgit.com/tonsky/FiraCode/1.205/distr/fira_code.css",
       ],
       scripts: [],

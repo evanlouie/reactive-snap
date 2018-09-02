@@ -8,7 +8,7 @@ import { Page } from "./components/Page";
 import { Post } from "./components/Post";
 import { BlogContext } from "./contexts/BlogContext";
 import { DefaultLayout } from "./layouts/DefaultLayout";
-import { compressCSS, compressJS, normalizeCSS, siteStyles, turbolinks } from "./server/File";
+import { compressCSS, compressJS, normalizeCSS, siteStyles, turbolinks, vue } from "./server/File";
 import { convertFileToPage } from "./server/Page";
 import { convertFileToPost } from "./server/Post";
 import { IPage, IPost } from "./types";
@@ -66,7 +66,9 @@ const App: React.StatelessComponent<IAppState> = ({
       <head>
         <title>{title}</title>
         {meta.map(Meta)}
-        {links.styles.map((href) => <link key={href} rel="stylesheet" href={encodeURI(href)} />)}
+        {links.styles.map((href) => (
+          <link key={href} rel="stylesheet" href={encodeURI(href)} />
+        ))}
         {styles.map(Style)}
         {scripts.map(Script)}
       </head>
@@ -91,7 +93,10 @@ const renderToStaticMarkup = async (
   posts: IPost[],
 ): Promise<string> => {
   const [scripts, styles]: [IScript[], IStyle[]] = await Promise.all([
-    Promise.all([turbolinks()])
+    Promise.all([
+      turbolinks(),
+      // vue(),
+    ])
       .then((uncompressed) => Promise.all(uncompressed.map(compressJS)))
       .then((compressed) => compressed.map((script) => ({ script }))),
     Promise.all([normalizeCSS(), siteStyles()])

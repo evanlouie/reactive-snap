@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Hello World
-tags: [ misc ]
+tags: [misc]
 ---
 
 > Been a while, huh? Finally found some time to ge the site back up :)

@@ -1,5 +1,3 @@
-import { createFactory } from "../../node_modules/@types/react";
-
 export interface IEulerProblem {
   problemNumber: number;
   question: string;
@@ -22,6 +20,7 @@ export const Euler2: IEulerProblem = {
   1, 2, 3, 5, 8, 13, 21, 34, 55, 89, ...
   By considering the terms in the Fibonacci sequence whose values do not exceed four million, find the sum of the even-valued terms.`,
   answer: (below: number = 4000000) => {
+    const fibs = (a = 0, b = 1) => ({ value: a + b, next: () => fibs(b, a + b) });
     // const fib = (n: number, m: { [_: number]: number } = { 1: 1, 2: 2 }): number =>
     //   m[n] ? m[n] : (m[n] = fib(n - 1, m) + fib(n - 2, m));
 
@@ -738,21 +737,19 @@ export const Euler14: IEulerProblem = {
   },
 };
 
-// const Euler15: IEulerProblem = {
-//   problemNumber: 15,
-//   question: `
-//   Starting in the top left corner of a 2×2 grid, and only being able to move to the right and down, there are exactly 6 routes to the bottom right corner.
-//   How many such routes are there through a 20×20 grid?`,
+export const Euler15: IEulerProblem = {
+  problemNumber: 15,
+  question: `
+  Starting in the top left corner of a 2×2 grid, and only being able to move to the right and down, there are exactly 6 routes to the bottom right corner.
+  How many such routes are there through a 20×20 grid?`,
 
-//   answer: () => {
-//     const generatePaths = (
-//       currX: number,
-//       currY: number,
-//       path: number[][] = [],
-//       sideLength: number = 20,
-//     ) => (currX === sideLength - 1 && currY === sideLength - 1 ? path : path);
-//   },
-// };
+  answer: () => {
+    const factorial = (n: number) =>
+      [...Array(n)].map((_, i) => i + 1).reduce((product, num) => product * num);
+    const centralBinomialCoefficients = (n: number) => factorial(n * 2) / Math.pow(factorial(n), 2);
+    return centralBinomialCoefficients(20);
+  },
+};
 
 export const Euler16: IEulerProblem = {
   problemNumber: 16,
@@ -785,24 +782,94 @@ export const Euler16: IEulerProblem = {
   },
 };
 
-// const Euler17: IEulerProblem = {
-//   problemNumber: 17,
-//   question: `If the numbers 1 to 5 are written out in words: one, two, three, four, five, then there are 3 + 3 + 5 + 4 + 4 = 19 letters used in total.
-//   If all the numbers from 1 to 1000 (one thousand) inclusive were written out in words, how many letters would be used?`,
-//   answer: () => {
-//     const letterMap: { [n: number]: string } = {
-//       1: "one",
-//       2: "two",
-//       3: "three",
-//       4: "four",
-//       5: "five",
-//       6: "six",
-//       7: "seven",
-//       8: "eight",
-//       9: "nine",
-//     };
-//   },
-// };
+export const Euler17: IEulerProblem = {
+  problemNumber: 17,
+  question: `If the numbers 1 to 5 are written out in words: one, two, three, four, five, then there are 3 + 3 + 5 + 4 + 4 = 19 letters used in total.
+  If all the numbers from 1 to 1000 (one thousand) inclusive were written out in words, how many letters would be used?`,
+  answer: () => {
+    const letterMap: { [n: number]: string } = {
+      0: "",
+      1: "one",
+      2: "two",
+      3: "three",
+      4: "four",
+      5: "five",
+      6: "six",
+      7: "seven",
+      8: "eight",
+      9: "nine",
+      10: "ten",
+      11: "eleven",
+      12: "twelve",
+      13: "thirteen",
+      14: "fourteen",
+      15: "fifteen",
+      16: "sixteen",
+      17: "seventeen",
+      18: "eighteen",
+      19: "nineteen",
+      20: "twenty",
+      30: "thirty",
+      40: "forty",
+      50: "fifty",
+      60: "sixty",
+      70: "seventy",
+      80: "eighty",
+      90: "ninety",
+    };
+
+    const toEnglish = (n: number, carry: string = ""): string =>
+      n.toString().length === 0
+        ? carry
+        : toEnglish(
+            Number.parseInt(
+              n
+                .toString()
+                .split("")
+                .splice(0, 1)[0],
+              10,
+            ),
+            carry + "",
+          );
+
+    const toEnglishString = (target: number) => {
+      const numbers = target
+        .toString()
+        .split("")
+        .map((c) => Number.parseInt(c, 10));
+
+      const [ones, tens, hundreds, thousands] = [...numbers].reverse();
+
+      const tensToString = (t: number, o: number) =>
+        ((n = t * 10 + o) => (n <= 20 ? letterMap[n] : letterMap[t * 10] + " " + letterMap[o]))();
+      // {
+      //   const n = t * 10 + o;
+      //   return n <= 20 ? letterMap[n] : letterMap[t * 10] + " " + letterMap[o];
+      // }
+
+      switch (numbers.length) {
+        case 1:
+          return letterMap[ones];
+        case 2:
+          return tensToString(tens, ones);
+        case 3:
+          return letterMap[hundreds] + " hundred and " + tensToString(tens, ones);
+        case 4:
+          return (
+            letterMap[thousands] +
+            " thousand " +
+            (hundreds > 0 ? letterMap[hundreds] : "") +
+            " hundred and " +
+            tensToString(tens, ones)
+          );
+        default:
+          throw new Error("Invalid number length; minimum 1, maximum 9999");
+      }
+    };
+    console.log([...Array(1000)].map((_, i) => i + 1).map(toEnglishString));
+    return 123;
+  },
+};
 
 // const Euler18: IEulerProblem = {
 //   problemNumber: 18,

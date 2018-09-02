@@ -1,8 +1,8 @@
 ---
 layout: post
-title: 'React & Web Workers'
-tags: [ react, web-workers, node, javascript, browser, multi-thread, multi-process ]
-excerpt: 'One of the less well known or used features of modern browsers is Web Worker support. With it, you can use spin up isolated processes to do CPU intensive tasks without locking the windows main rendering thread.'
+title: "React & Web Workers"
+tags: [react, web-workers, node, javascript, browser, multi-thread, multi-process]
+excerpt: "One of the less well known or used features of modern browsers is Web Worker support. With it, you can use spin up isolated processes to do CPU intensive tasks without locking the windows main rendering thread."
 ---
 
 One of the less well known or used features of modern browsers is Web Worker support. With it, you can spin up isolated processes to do CPU intensive tasks without locking the windows main rendering thread.

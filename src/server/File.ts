@@ -34,6 +34,8 @@ export const normalizeCSS = () => getFile(require.resolve("normalize.css"));
 export const react = () => getFile(require.resolve("react/umd/react.production.min.js"));
 // export const reactDom = () => getFile(require.resolve("react-dom/umd/react-dom.development.js"));
 export const reactDom = () => getFile(require.resolve("react-dom/umd/react-dom.production.min.js"));
+// export const vue = () => getFile(require.resolve("vue/dist/vue.js"))
+export const vue = () => getFile(require.resolve("vue/dist/vue.min.js"));
 
 /**
  * All in one minifier for full html

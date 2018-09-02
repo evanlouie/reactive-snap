@@ -33,7 +33,7 @@ export const DefaultLayout: React.StatelessComponent<ILayout> = ({ pages, posts,
             {page.title}
           </a>
         ))}
-        <a className="top-nav__link" href="https://github.com/evanlouie/">
+        <a className="top-nav__link" href="https://github.com/evanlouie/" target="_blank">
           GitHub
         </a>
       </nav>

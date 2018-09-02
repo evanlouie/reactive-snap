@@ -23,7 +23,7 @@ const parseMarkdown = async (
 ): Promise<{ html: string; frontMatter: { [key: string]: any } }> => {
   const markdown = await fs.readFile(filepath, { encoding: "utf8" });
   const lines = markdown.split("\n");
-  const lineNosWithTripleDash: number[] = lines.reduce<number[]>(
+  const lineNosWithTripleDash = lines.reduce<number[]>(
     (lineNos, line, lineNo) => (line === "---" ? lineNos.concat(lineNo) : lineNos),
     [],
   );

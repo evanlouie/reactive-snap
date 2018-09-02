@@ -8,7 +8,9 @@ import {
   Euler12,
   Euler13,
   Euler14,
+  Euler15,
   Euler16,
+  Euler17,
   Euler2,
   Euler3,
   Euler4,
@@ -85,6 +87,12 @@ const Euler: StatelessComponent<{ problems: IEulerProblem[] }> = ({ problems }) 
               }}
             />
           </pre>
+          {/* <div
+            className="button"
+            dangerouslySetInnerHTML={{
+              __html: `<button onClick="(() => console.log((${problem.answer.toString()})()))()">Answer!</button>`,
+            }}
+          /> */}
         </div>
       ))}
     </div>
@@ -108,7 +116,9 @@ export default (() => (
       Euler12,
       Euler13,
       Euler14,
+      Euler15,
       Euler16,
+      Euler17,
     ]}
   />
 )) as StatelessComponent;
